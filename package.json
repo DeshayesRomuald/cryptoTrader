@@ -1,0 +1,19 @@
+{
+  "name": "cryptotrader",
+  "version": "1.0.0",
+  "description": "crypto trader",
+  "main": "cryptoTrader.js",
+  "scripts": {
+    "test": "test",
+    "r": "node cryptoTrader.js"
+  },
+  "author": "Darkpaillasson",
+  "license": "ISC",
+  "dependencies": {
+    "clone": "^2.1.1",
+    "moment": "^2.18.1",
+    "sleep": "^5.1.1",
+    "system-sleep": "^1.3.5",
+    "xmlhttprequest": "^1.8.0"
+  }
+}

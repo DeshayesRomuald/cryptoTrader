@@ -1,0 +1,48 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/romuald/.nvm/versions/node/v6.5.0/bin/node',
+1 verbose cli   '/home/romuald/.nvm/versions/node/v6.5.0/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'run' ]
+2 info using npm@3.10.3
+3 info using node@v6.5.0
+4 verbose run-script [ 'prerun', 'run', 'postrun' ]
+5 info lifecycle cryptotrader@1.0.0~prerun: cryptotrader@1.0.0
+6 silly lifecycle cryptotrader@1.0.0~prerun: no script for prerun, continuing
+7 info lifecycle cryptotrader@1.0.0~run: cryptotrader@1.0.0
+8 verbose lifecycle cryptotrader@1.0.0~run: unsafe-perm in lifecycle true
+9 verbose lifecycle cryptotrader@1.0.0~run: PATH: /home/romuald/.nvm/versions/node/v6.5.0/lib/node_modules/npm/bin/node-gyp-bin:/home/romuald/privé/kraken/cryptoTrader/node_modules/.bin:/home/romuald/.nvm/versions/node/v6.5.0/bin:/home/romuald/.nvm/versions/node/v6.5.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/romuald/flyway
+10 verbose lifecycle cryptotrader@1.0.0~run: CWD: /home/romuald/privé/kraken/cryptoTrader
+11 silly lifecycle cryptotrader@1.0.0~run: Args: [ '-c', 'node cryptoTrader.js' ]
+12 silly lifecycle cryptotrader@1.0.0~run: Returned: code: 1  signal: null
+13 info lifecycle cryptotrader@1.0.0~run: Failed to exec run script
+14 verbose stack Error: cryptotrader@1.0.0 run: `node cryptoTrader.js`
+14 verbose stack Exit status 1
+14 verbose stack     at EventEmitter.<anonymous> (/home/romuald/.nvm/versions/node/v6.5.0/lib/node_modules/npm/lib/utils/lifecycle.js:242:16)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at EventEmitter.emit (events.js:191:7)
+14 verbose stack     at ChildProcess.<anonymous> (/home/romuald/.nvm/versions/node/v6.5.0/lib/node_modules/npm/lib/utils/spawn.js:40:14)
+14 verbose stack     at emitTwo (events.js:106:13)
+14 verbose stack     at ChildProcess.emit (events.js:191:7)
+14 verbose stack     at maybeClose (internal/child_process.js:877:16)
+14 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:226:5)
+15 verbose pkgid cryptotrader@1.0.0
+16 verbose cwd /home/romuald/privé/kraken/cryptoTrader
+17 error Linux 4.4.0-81-generic
+18 error argv "/home/romuald/.nvm/versions/node/v6.5.0/bin/node" "/home/romuald/.nvm/versions/node/v6.5.0/bin/npm" "run" "run"
+19 error node v6.5.0
+20 error npm  v3.10.3
+21 error code ELIFECYCLE
+22 error cryptotrader@1.0.0 run: `node cryptoTrader.js`
+22 error Exit status 1
+23 error Failed at the cryptotrader@1.0.0 run script 'node cryptoTrader.js'.
+23 error Make sure you have the latest version of node.js and npm installed.
+23 error If you do, this is most likely a problem with the cryptotrader package,
+23 error not with npm itself.
+23 error Tell the author that this fails on your system:
+23 error     node cryptoTrader.js
+23 error You can get information on how to open an issue for this project with:
+23 error     npm bugs cryptotrader
+23 error Or if that isn't available, you can get their info via:
+23 error     npm owner ls cryptotrader
+23 error There is likely additional logging output above.
+24 verbose exit [ 1, true ]
