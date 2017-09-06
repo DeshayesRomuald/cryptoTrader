@@ -1,5 +1,5 @@
 // we will keep a sliding window of size SIZE. This is the size of the array
-const SIZE = 10;
+const SIZE = 20;
 
 /** *********************************************************************************
  *  Helper;
@@ -22,6 +22,8 @@ const SlidingWindow = function SlidingWindow() {
   this.maxValueOnWindow = 0;
   // max amplitude in % present in window to quickly detect big changes
   this.maxAmplitudeOnWindow = 0;
+  //
+
 };
 // **********************************************************************************
 
