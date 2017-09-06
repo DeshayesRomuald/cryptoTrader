@@ -21,11 +21,12 @@ function httpGetSync(theUrl, callback) {
 
 // while (true) {
     // getSpread();
-    // const ohlc = getOHLC('XXRPZEUR', 5, 1503983600);
-    // const ohlc = getOHLC('XXMRZEUR', 1, 1503933600);
-    const ohlc = parseOHLC('XLTCZEUR', 1, 1503933600);
-    // const ohlc = getOHLC('XETHZEUR', 1, 1503933600);
-    // const ohlc = getOHLC('BCHEUR', 1, 1503933600);
+    // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
+    // const ohlc = parseOHLC('XXMRZEUR', 1, 1503933600);
+    // const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
+    // const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
+    // const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
+    const ohlc = parseOHLC('BCHEUR', 1, 1503933600);
     // const ohlc = clone(xrpOHLC);
     // const ohlc = clone(bchOHLC);
 
@@ -82,8 +83,8 @@ function parseOHLC(pair = 'BCHEUR', timeIntervalInMin = 1, sinceValue = null) {
 }
 
 function writeToFile(array) {
-    const arrayString = JSON.stringify(array);
-    fs.writeFile("./output.txt", arrayString, function (err) {
+    const arrayString = JSON.stringify(array, null, 2);
+    fs.writeFile("./output.json", arrayString, function (err) {
         if (err) {
             return console.log(err);
         }
