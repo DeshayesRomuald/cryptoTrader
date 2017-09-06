@@ -37,7 +37,7 @@ for (let y = 0; y < ohlc.length; y++) {
   const cryptoOhlc = cryptoOHLCFactory.create(ohlc[y]);
   slidingWindow.addCryptoOHLC(cryptoOhlc);
   const trailingStopPercent = estimateTrailingStopPercent(slidingWindow);
-  decide(slidingWindow, trailingStopPercent); // trailingStopPercent
+  decide(slidingWindow, 1); // trailingStopPercent
 
   sleep(SLEEP_BETWEEN_DATA);
 
@@ -69,8 +69,14 @@ function decide(slidingWindow, trailingStopPercent = 1) {
 
   // more positive than negative in the window and a progression over 1.5% on window
   // BUY
-  if (differencePosNeg > 0 && slidingWindow.percentageProgressionOnWindow > 1.5 && !bought) {
+  if (differencePosNeg > -5 &&
+    slidingWindow.percentageProgressionOnWindow > 1.5 &&
+    slidingWindow.numberPositiveSecondHalf > 4 &&
+    slidingWindow.numberNegativeLastFive <= 2 &&
+    !bought) {
     messageBuy(differencePosNeg, lastClosed);
+    console.log('#########previousPositivesOrZero', slidingWindow.previousPositivesOrZero);
+    console.log('#########numberPositiveSecondHalf', slidingWindow.numberPositiveSecondHalf);
     sleep(SLEEP_BETWEEN_TRANSACTION);
 
 
