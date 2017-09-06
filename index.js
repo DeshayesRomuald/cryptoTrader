@@ -1,7 +1,6 @@
 var sleep = require('system-sleep');
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const clone = require('clone');
-const notifier = require('node-notifier');
 const path = require('path');
 
 const bchOhlc = require('./training-data/BCHEUR.json');
@@ -13,6 +12,7 @@ const ltcOhlc15m = require('./training-data/LTCEUR15min.json');
 const eth5m = require('./training-data/ETH5min.json');
 
 const math = require('./utils/math');
+const { notify } = require('./utils/notifier');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
 const slidingWindowFactory = require('./factories/slidingWindowFactory');
 
@@ -20,7 +20,6 @@ const slidingWindowFactory = require('./factories/slidingWindowFactory');
 const slidingWindow = slidingWindowFactory.create('LiteCoin');
 const ohlc = clone(bchOhlc6);
 
-const USE_NOTIFICATIONS = false;
 const SLEEP_BETWEEN_TRANSACTION = 0;
 const SLEEP_BETWEEN_DATA = 0;
 
@@ -114,19 +113,6 @@ function decide(slidingWindow, trailingStopPercent = 1) {
   }
 
   previousValue = lastClosed;
-}
-
-function notify(title = 'Should BUY', message = `Value is ${buyValue}`) {
-  //notify user with system notification to buy
-  if (USE_NOTIFICATIONS) {
-    notifier.notify({
-      title,
-      message,
-      timeout: 2,
-    }, function (err, response) {
-      // Response is response from notification
-    });
-  }
 }
 
 function messageBuy(differencePosNeg, lastClosed) {
