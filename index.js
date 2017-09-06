@@ -5,17 +5,24 @@ const notifier = require('node-notifier');
 const path = require('path');
 
 const bchOhlc = require('./training-data/BCHEUR.json');
+const bchOhlc6 = require('./training-data/BCH_6_9_17.json');
+const ethOhlc = require('./training-data/ETHEUR_6_9_17.json');
 const ltcOhlc = require('./training-data/LTCEUR_5_9_17.json');
+const ltcOhlc6 = require('./training-data/LTCEUR_6_9_17.json');
+const ltcOhlc15m = require('./training-data/LTCEUR15min.json');
+const eth5m = require('./training-data/ETH5min.json');
 
 const math = require('./utils/math');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
 const slidingWindowFactory = require('./factories/slidingWindowFactory');
 
 
-const slidingWindow = slidingWindowFactory.create();
-const ohlc = clone(ltcOhlc);
+const slidingWindow = slidingWindowFactory.create('LiteCoin');
+const ohlc = clone(bchOhlc6);
 
 const USE_NOTIFICATIONS = false;
+const SLEEP_BETWEEN_TRANSACTION = 0;
+const SLEEP_BETWEEN_DATA = 0;
 
 let bought = false;
 let previousProgression = 0;
@@ -28,14 +35,21 @@ let totalSell = 0;
 
 for (let y = 0; y < ohlc.length; y++) {
   const cryptoOhlc = cryptoOHLCFactory.create(ohlc[y]);
-  // console.log('#########cryptoOhlc', JSON.stringify(cryptoOhlc, null, 2));
-  // console.log('#########');
-  // console.log('#########');
   slidingWindow.addCryptoOHLC(cryptoOhlc);
-  decide(slidingWindow);
+  const trailingStopPercent = estimateTrailingStopPercent(slidingWindow);
+  decide(slidingWindow, trailingStopPercent); // trailingStopPercent
 
-  sleep(10);
+  sleep(SLEEP_BETWEEN_DATA);
 
+}
+
+function estimateTrailingStopPercent(slidingWindow) {
+  const meanStickSize = slidingWindow.meanCandleSizeInPercent;
+  const stdDevCandleSizePercent = slidingWindow.stdDevCandleSizePercent;
+
+  // ~87% of candle size in window are smaller than this, should
+  // generally 2 iterations going down before selling
+  return 2 * stdDevCandleSizePercent;
 }
 
 
@@ -54,15 +68,20 @@ function decide(slidingWindow, trailingStopPercent = 1) {
   // console.log('#########differencePosNeg', JSON.stringify(differencePosNeg, null, 2));
 
   // more positive than negative in the window and a progression over 1.5% on window
+  // BUY
   if (differencePosNeg > 0 && slidingWindow.percentageProgressionOnWindow > 1.5 && !bought) {
     messageBuy(differencePosNeg, lastClosed);
+    sleep(SLEEP_BETWEEN_TRANSACTION);
+
 
     buyValue = lastClosed;
     bought = true;
     previousProgression = slidingWindow.percentageProgressionOnWindow;
     limitToSell = lastClosed - (trailingStopPercent * lastClosed / 100);
   }
+
   // if it still raises, set the new minimum to the new progress
+  // RAISE TRAILING STOP
   else if (bought && lastClosed >= previousValue) {
     const newLimitToSell = lastClosed - (trailingStopPercent * lastClosed / 100);
     // it is still possible that value has lowered in previous iteration,
@@ -75,7 +94,9 @@ function decide(slidingWindow, trailingStopPercent = 1) {
       console.log('new MIN ', math.round(limitToSell, 4));
     }
   }
+
   // has lower more than 1%  wrt trailing stop then sell
+  // SELL
   else if (bought && lastClosed < limitToSell) {
 
     const beneficeAbsolute = lastClosed - buyValue;
@@ -84,6 +105,8 @@ function decide(slidingWindow, trailingStopPercent = 1) {
 
     // we should sell with a limit order to avoid big holes
     messageSell(beneficePercent, lastClosed);
+    sleep(SLEEP_BETWEEN_TRANSACTION);
+
     bought = false;
 
   }
@@ -108,26 +131,25 @@ function messageBuy(differencePosNeg, lastClosed) {
   console.log('');
   console.log('#########');
   console.log('#########');
-  console.log('#########BUY', slidingWindow.getTime(), '@', lastClosed);
+  console.log('#########BUY', slidingWindow.getTime(), '@', lastClosed, '<<<<<');
   console.log('[Prog : ]', math.round(slidingWindow.percentageProgressionOnWindow));
   console.log('[Max Amplitude : ]', math.round(slidingWindow.maxAmplitudeOnWindow));
   console.log('[Diff pos neg : ]', math.round(differencePosNeg));
-  console.log('#########');
-  console.log('#########');
-  console.log('');
 
-  notify('SHOULD BUY', `value is ${lastClosed}`);
+  notify(`You should BUY some ${slidingWindow.cryptoName}`,
+    `Its value is ${lastClosed}`);
 }
 
 function messageSell(beneficePercent, lastClosed) {
   console.log('#########');
-  console.log('#########');
   console.log('#########SELL',
     slidingWindow.getTime(),
-    '@', lastClosed);
+    '@', lastClosed, '>>>>>');
   console.log('[Benefice :] ', math.round(beneficePercent), '%');
   console.log('[Total Sell :] ', math.round(totalSell), '%');
   console.log('#########');
-  console.log('#########');
-  notify('Should SELL', `Value is ${lastClosed}`);
+  console.log('');
+
+  notify(`It's time to sell your ${slidingWindow.cryptoName}`,
+    `Its Value is ${lastClosed}, \nyou made ${math.round(beneficePercent)}% benefice`);
 }

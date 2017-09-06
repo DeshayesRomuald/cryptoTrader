@@ -5,7 +5,7 @@ const SIZE = 20;
  *  Helper;
  *
  ** *********************************************************************************/
-const SlidingWindow = function SlidingWindow() {
+const SlidingWindow = function SlidingWindow(cryptoName) {
   // array of SIZE last CryptoOHLC values
   this.cryptoValues = [];
   // number of previous positive bars in the array
@@ -22,7 +22,12 @@ const SlidingWindow = function SlidingWindow() {
   this.maxValueOnWindow = 0;
   // max amplitude in % present in window to quickly detect big changes
   this.maxAmplitudeOnWindow = 0;
-  //
+  // mean candle size in percent
+  this.meanCandleSizeInPercent = 0;
+  // standard deviation around mean candle size
+  this.stdDevCandleSizePercent = 0;
+  // crypto name
+  this.cryptoName = cryptoName;
 
 };
 // **********************************************************************************
@@ -40,6 +45,7 @@ function addCryptoOHLC(cryptoOhlc) {
   if (this.hasAlreadyBeenAdded(cryptoOhlc)) {
     return null;
   }
+
   // removing first element if max window size is reached
   if (this.cryptoValues.length == SIZE) {
     const oldestOHLC = this.cryptoValues.shift();
@@ -51,21 +57,22 @@ function addCryptoOHLC(cryptoOhlc) {
     }
   }
 
+  // update positive and negative count on window
   if (cryptoOhlc.closeMinusOpen > 0) {
     this.previousPositivesOrZero++;
   } else {
     this.previousNegatives++;
   }
 
+  // calculate various fields
   this.cryptoValues.push(cryptoOhlc);
   this.meanCryptoValues = calculateMeanValue(this);
-
-  // we compute percentage from open of first to close of last
   this.percentageProgressionOnWindow = calculatePercentageProgressionOnWindow(this);
-
   this.minValueOnWindow = calculateMinValueOnWindow(this);
   this.maxValueOnWindow = calculateMaxValueOnWindow(this);
   this.maxAmplitudeOnWindow = calculateMaxAmplitudeOnWindow(this);
+  this.meanCandleSizeInPercent = calculateMeanCandleSizePercent(this);
+  this.stdDevCandleSizePercent = calculateStdDevCandleSizePercent(this);
 
   return cryptoOhlc;
 }
@@ -80,7 +87,7 @@ SlidingWindow.prototype.addCryptoOHLC = addCryptoOHLC;
  *
  ** *********************************************************************************/
 function getTime() {
-  return  this.getLast().date;
+  return this.getLast().date;
 }
 SlidingWindow.prototype.getTime = getTime;
 // **********************************************************************************
@@ -174,4 +181,44 @@ const calculateMaxAmplitudeOnWindow = function calculateMaxAmplitudeOnWindow(sli
 }
 // **********************************************************************************
 
+
+
+
+/** *********************************************************************************
+ *  Helper;
+ *
+ ** *********************************************************************************/
+const calculateMeanCandleSizeAbsolute = function calculateMeanCandleSizeAbsolute(slidingWindow) {
+  return slidingWindow.cryptoValues.reduce((acc, cur) => acc + (Math.abs(cur.closeMinusOpen) / slidingWindow.cryptoValues.length), 0);
+}
+// **********************************************************************************
+
+
+
+
+/** *********************************************************************************
+ *  Helper;
+ *
+ ** *********************************************************************************/
+const calculateMeanCandleSizePercent = function calculateMeanCandleSizePercent(slidingWindow) {
+  const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
+  return meanSizeAbs / slidingWindow.meanCryptoValues * 100;
+}
+// **********************************************************************************
+
+
+
+/** *********************************************************************************
+ *  Helper;
+ *
+ ** *********************************************************************************/
+const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePercent(slidingWindow) {
+  const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
+  const squaredDiffs = slidingWindow.cryptoValues.map((cryptoValue) =>
+    Math.pow((cryptoValue.closeMinusOpen - meanSizeAbs), 2));
+  const variance = squaredDiffs.reduce((acc, cur) => acc + cur / slidingWindow.cryptoValues.length);
+  const stdDevAbs = Math.sqrt(variance);
+  return stdDevAbs / slidingWindow.meanCryptoValues * 100;
+}
+// **********************************************************************************
 module.exports = SlidingWindow;
