@@ -28,6 +28,10 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.stdDevCandleSizePercent = 0;
   // crypto name
   this.cryptoName = cryptoName;
+  // how many positive candles in second half of window
+  this.numberPositiveSecondHalf;
+  // number of negative in the last five should not be bigger than 2
+  this.numberNegativeLastFive;
 
 };
 // **********************************************************************************
@@ -73,6 +77,8 @@ function addCryptoOHLC(cryptoOhlc) {
   this.maxAmplitudeOnWindow = calculateMaxAmplitudeOnWindow(this);
   this.meanCandleSizeInPercent = calculateMeanCandleSizePercent(this);
   this.stdDevCandleSizePercent = calculateStdDevCandleSizePercent(this);
+  this.numberPositiveSecondHalf = calculateNumberPositiveSecondHalf(this);
+  this.numberNegativeLastFive = calculateNumberNegativeLastFive(this);
 
   return cryptoOhlc;
 }
@@ -221,4 +227,53 @@ const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePerce
   return stdDevAbs / slidingWindow.meanCryptoValues * 100;
 }
 // **********************************************************************************
+
+
+
+
+/** *********************************************************************************
+ *  Helper;
+ *
+ ** *********************************************************************************/
+const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecondHalf(slidingWindow) {
+  const windowLength = slidingWindow.cryptoValues.length;
+  const values = slidingWindow.cryptoValues;
+  let numberPositive = 0;
+  for (let y = windowLength - 1; y > windowLength / 2; y--) {
+    if (values[y].closeMinusOpen > 0) {
+      numberPositive++;
+    }
+  }
+  return numberPositive;
+}
+// **********************************************************************************
+
+
+
+
+/** *********************************************************************************
+ *  Helper;
+ *
+ ** *********************************************************************************/
+const calculateNumberNegativeLastFive = function calculateNumberNegativeLastFive(slidingWindow) {
+  const windowLength = slidingWindow.cryptoValues.length;
+  const values = slidingWindow.cryptoValues;
+  let numberNegative = 0;
+  let count = 0;
+
+  for (let y = windowLength - 1; y >= 0; y--) {
+    count++;
+    if (values[y].closeMinusOpen < 0) {
+      numberNegative++;
+    }
+    if (count >= 4) { //exit the loop in a dirty way
+      y = -1;
+    }
+  }
+  return numberNegative;
+}
+// **********************************************************************************
+
+
+
 module.exports = SlidingWindow;
