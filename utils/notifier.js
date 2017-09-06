@@ -1,6 +1,6 @@
 const notifier = require('node-notifier');
 
-const USE_NOTIFICATIONS = true;
+const USE_NOTIFICATIONS = false;
 
 function notify(title = 'Should BUY', message = `Value is ${buyValue}`) {
   //notify user with system notification to buy
