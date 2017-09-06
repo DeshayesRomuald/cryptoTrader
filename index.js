@@ -32,6 +32,7 @@ let percentToMin = 0;
 let buyValue = 0;
 
 let totalSell = 0;
+let transactionsCompleted = 0;
 
 for (let y = 0; y < ohlc.length; y++) {
   const cryptoOhlc = cryptoOHLCFactory.create(ohlc[y]);
@@ -102,9 +103,10 @@ function decide(slidingWindow, trailingStopPercent = 1) {
     const beneficeAbsolute = lastClosed - buyValue;
     const beneficePercent = beneficeAbsolute / buyValue * 100;
     totalSell += beneficePercent;
+    transactionsCompleted++;
 
     // we should sell with a limit order to avoid big holes
-    messageSell(beneficePercent, lastClosed);
+    messageSell(beneficePercent, lastClosed, transactionsCompleted);
     sleep(SLEEP_BETWEEN_TRANSACTION);
 
     bought = false;
@@ -140,13 +142,15 @@ function messageBuy(differencePosNeg, lastClosed) {
     `Its value is ${lastClosed}`);
 }
 
-function messageSell(beneficePercent, lastClosed) {
+function messageSell(beneficePercent, lastClosed, transactionsCompleted) {
   console.log('#########');
   console.log('#########SELL',
     slidingWindow.getTime(),
     '@', lastClosed, '>>>>>');
   console.log('[Benefice :] ', math.round(beneficePercent), '%');
-  console.log('[Total Sell :] ', math.round(totalSell), '%');
+  console.log('[Total Sell :] ',
+    math.round(totalSell),
+    `% in ${transactionsCompleted} transactions`);
   console.log('#########');
   console.log('');
 
