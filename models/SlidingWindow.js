@@ -155,8 +155,10 @@ SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC()
 // **********************************************************************************
 
 SlidingWindow.prototype.toString = function toString() {
-  console.log('');
-  console.log('######### Sliding Window', this.cryptoName, ' @', this.getTime());
+  if (this.toStringMethod === 'full' || this.toStringMethod === 'light') {
+    console.log('');
+    console.log('######### Sliding Window', this.cryptoName, ' @', this.getTime());
+  }
   if (this.toStringMethod === 'full') {
     console.log('------');
     this.cryptoValues.forEach((elem, index) => {
