@@ -7,7 +7,7 @@ const sound = new Sound('../media/sound/3721.mp3');
 
 
 
-const USE_NOTIFICATIONS = true;
+const USE_NOTIFICATIONS = false;
 
 function notify(title = 'Should BUY', message = `Value is ${buyValue}`) {
   //notify user with system notification to buy
