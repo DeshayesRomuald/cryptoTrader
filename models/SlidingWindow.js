@@ -1,3 +1,6 @@
+const math = require('../utils/math');
+
+
 // we will keep a sliding window of size SIZE. This is the size of the array
 const SIZE = 20;
 
@@ -32,6 +35,8 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.numberPositiveSecondHalf;
   // number of negative in the last five should not be bigger than 2
   this.numberNegativeLastFive;
+  // get time of last inserted cryptoOHLC
+  this.timeLastOHLC;
 
 };
 // **********************************************************************************
@@ -54,7 +59,7 @@ function addCryptoOHLC(cryptoOhlc) {
   if (this.cryptoValues.length == SIZE) {
     const oldestOHLC = this.cryptoValues.shift();
 
-    if (oldestOHLC.closeMinusOpen > 0) {
+    if (oldestOHLC && oldestOHLC.closeMinusOpen >= 0) {
       this.previousPositivesOrZero--;
     } else {
       this.previousNegatives--;
@@ -62,7 +67,7 @@ function addCryptoOHLC(cryptoOhlc) {
   }
 
   // update positive and negative count on window
-  if (cryptoOhlc.closeMinusOpen > 0) {
+  if (cryptoOhlc.closeMinusOpen >= 0) {
     this.previousPositivesOrZero++;
   } else {
     this.previousNegatives++;
@@ -79,6 +84,9 @@ function addCryptoOHLC(cryptoOhlc) {
   this.stdDevCandleSizePercent = calculateStdDevCandleSizePercent(this);
   this.numberPositiveSecondHalf = calculateNumberPositiveSecondHalf(this);
   this.numberNegativeLastFive = calculateNumberNegativeLastFive(this);
+  this.calculateTimeLastOHLC();
+
+  this.toString();
 
   return cryptoOhlc;
 }
@@ -92,10 +100,12 @@ SlidingWindow.prototype.addCryptoOHLC = addCryptoOHLC;
  *  @returns the time of the last ohlc in the sliding window
  *
  ** *********************************************************************************/
-function getTime() {
+SlidingWindow.prototype.getTime = function getTime() {
+  if (this.cryptoValues.length === 0) {
+    return null;
+  }
   return this.getLast().date;
 }
-SlidingWindow.prototype.getTime = getTime;
 // **********************************************************************************
 
 
@@ -106,10 +116,12 @@ SlidingWindow.prototype.getTime = getTime;
  *
  ** *********************************************************************************/
 SlidingWindow.prototype.getLast = function getLast() {
+  if (this.cryptoValues.length === 0) {
+    return null;
+  }
   return this.cryptoValues[this.cryptoValues.length - 1];
 }
 // **********************************************************************************
-
 
 
 
@@ -123,6 +135,39 @@ SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(crypt
 // **********************************************************************************
 
 
+
+
+/** *********************************************************************************
+ *  hasAlreadyBeenAdded
+ *
+ ** *********************************************************************************/
+SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC() {
+  this.timeLastOHLC = this.cryptoValues[this.cryptoValues.length - 1].time;
+  return this.timeLastOHLC;
+}
+// **********************************************************************************
+
+SlidingWindow.prototype.toString = function toString() {
+  console.log('');
+  console.log('######### Sliding Window', this.cryptoName, ' @', this.getTime());
+  console.log('------');
+  this.cryptoValues.forEach((elem, index) => {
+    console.log('#',
+      index,
+      '[Open :',
+      elem.open,
+      '] [Close :',
+      elem.close,
+      '] [Candle Size :',
+      math.round(elem.closeMinusOpen),
+      ']');
+  });
+  console.log('------');
+  console.log('pos :', this.previousPositivesOrZero);
+  console.log('pos2eH :', this.numberPositiveSecondHalf);
+  console.log('#########');
+  console.log('');
+}
 
 
 /** *********************************************************************************
