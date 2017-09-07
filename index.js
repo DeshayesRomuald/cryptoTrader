@@ -29,37 +29,41 @@ const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin Cash');
 const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple');
 
 while (true) {
-  const time = getTimeServer();
+  try {
+    const time = getTimeServer();
 
-  // LTC
-  const ohlcltc = getOHLC('XLTCZEUR', 1, time);
-  const cryptoOhlcltc = cryptoOHLCFactory.create(ohlcltc[ohlcltc.length - 1]);
-  cryptoWatcherLTC.add(cryptoOhlcltc);
+    // LTC
+    const ohlcltc = getOHLC('XLTCZEUR', 1, time);
+    const cryptoOhlcltc = cryptoOHLCFactory.create(ohlcltc[ohlcltc.length - 1]);
+    cryptoWatcherLTC.add(cryptoOhlcltc);
 
-  //BTC
-  const ohlcxbt = getOHLC('XXBTZEUR', 1, time);
-  const cryptoOhlcxbt = cryptoOHLCFactory.create(ohlcxbt[ohlcxbt.length - 1]);
-  cryptoWatcherBTC.add(cryptoOhlcxbt);
+    //BTC
+    const ohlcxbt = getOHLC('XXBTZEUR', 1, time);
+    const cryptoOhlcxbt = cryptoOHLCFactory.create(ohlcxbt[ohlcxbt.length - 1]);
+    cryptoWatcherBTC.add(cryptoOhlcxbt);
 
-  //ETH
-  const ohlceth = getOHLC('XETHZEUR', 1, time);
-  const cryptoOhlceth = cryptoOHLCFactory.create(ohlceth[ohlceth.length - 1]);
-  cryptoWatcherETH.add(cryptoOhlceth);
+    //ETH
+    const ohlceth = getOHLC('XETHZEUR', 1, time);
+    const cryptoOhlceth = cryptoOHLCFactory.create(ohlceth[ohlceth.length - 1]);
+    cryptoWatcherETH.add(cryptoOhlceth);
 
-  //XMR
-  const ohlcxmr = getOHLC('XXMRZEUR', 1, time);
-  const cryptoOhlcxmr = cryptoOHLCFactory.create(ohlcxmr[ohlcxmr.length - 1]);
-  cryptoWatcherXMR.add(cryptoOhlcxmr);
+    //XMR
+    const ohlcxmr = getOHLC('XXMRZEUR', 1, time);
+    const cryptoOhlcxmr = cryptoOHLCFactory.create(ohlcxmr[ohlcxmr.length - 1]);
+    cryptoWatcherXMR.add(cryptoOhlcxmr);
 
-  //BCH
-  const ohlcbch = getOHLC('BCHEUR', 1, time);
-  const cryptoOhlcbch = cryptoOHLCFactory.create(ohlcbch[ohlcbch.length - 1]);
-  cryptoWatcherBCH.add(cryptoOhlcbch);
+    //BCH
+    const ohlcbch = getOHLC('BCHEUR', 1, time);
+    const cryptoOhlcbch = cryptoOHLCFactory.create(ohlcbch[ohlcbch.length - 1]);
+    cryptoWatcherBCH.add(cryptoOhlcbch);
 
-  //XRP
-  const ohlcxrp = getOHLC('XXRPZEUR', 1, time);
-  const cryptoOhlcxrp = cryptoOHLCFactory.create(ohlcxrp[ohlcxrp.length - 1]);
-  cryptoWatcherXRP.add(cryptoOhlcxrp);
+    //XRP
+    const ohlcxrp = getOHLC('XXRPZEUR', 1, time);
+    const cryptoOhlcxrp = cryptoOHLCFactory.create(ohlcxrp[ohlcxrp.length - 1]);
+    cryptoWatcherXRP.add(cryptoOhlcxrp);
+  } catch (err) {
+    console.log('#########oops ', err);
+  }
 
   sleep(30000);
 }
