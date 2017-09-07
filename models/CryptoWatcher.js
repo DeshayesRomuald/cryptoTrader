@@ -30,24 +30,23 @@ const CryptoWatcher = function CryptoWatcher() {
   this.maxNegativeLastFive = 2;
 };
 
-SlidingWindow.prototype.add = function add(cryptoOhlc) {
+CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
-  estimateTrailingStopPercent();
-  decide();
+  this.estimateTrailingStopPercent();
+  this.decide();
 
   sleep(SLEEP_BETWEEN_DATA);
 
 }
-module.exports = CryptoWatcher;
 
 
-SlidingWindow.prototype.estimateTrailingStopPercent = function estimateTrailingStopPercent() {
+CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingStopPercent() {
   const meanStickSize = this.slidingWindow.meanCandleSizeInPercent;
   const stdDevCandleSizePercent = this.slidingWindow.stdDevCandleSizePercent;
 
   // ~99% of candle size in window are smaller than this, should
   // generally 2 iterations going down before selling
-  this.estimateTrailingStopPercent = stdDevCandleSizePercent * this.stdDevMultiplier;
+  this.trailingStopPercent = stdDevCandleSizePercent * this.stdDevMultiplier;
   return this.trailingStopPercent;
 }
 
@@ -55,7 +54,7 @@ SlidingWindow.prototype.estimateTrailingStopPercent = function estimateTrailingS
 
 // implement a trailing stop
 // as long as it raises, keep it, when it stops, sell it.
-SlidingWindow.prototype.decide = function decide() {
+CryptoWatcher.prototype.decide = function decide() {
   let differencePosNeg = 0;
 
   if (this.slidingWindow.previousNegatives !== 0) {
@@ -73,7 +72,7 @@ SlidingWindow.prototype.decide = function decide() {
     this.slidingWindow.numberPositiveSecondHalf > this.minPositiveSecHalf &&
     this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
     !this.bought) {
-    messageBuy(differencePosNeg, lastClosed);
+    this.messageBuy(differencePosNeg, lastClosed);
     console.log('#########previousPositivesOrZero', this.slidingWindow.previousPositivesOrZero);
     console.log('#########numberPositiveSecondHalf', this.slidingWindow.numberPositiveSecondHalf);
     sleep(SLEEP_BETWEEN_TRANSACTION);
@@ -110,7 +109,7 @@ SlidingWindow.prototype.decide = function decide() {
     this.transactionsCompleted++;
 
     // we should sell with a limit order to avoid big holes
-    messageSell(beneficePercent, lastClosed);
+    this.messageSell(beneficePercent, lastClosed);
     sleep(SLEEP_BETWEEN_TRANSACTION);
 
     this.bought = false;
@@ -120,7 +119,7 @@ SlidingWindow.prototype.decide = function decide() {
   this.previousValue = lastClosed;
 }
 
-SlidingWindow.prototype.messageBuy = function messageBuy(differencePosNeg, lastClosed) {
+CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastClosed) {
   console.log('');
   console.log('#########');
   console.log('#########');
@@ -133,7 +132,7 @@ SlidingWindow.prototype.messageBuy = function messageBuy(differencePosNeg, lastC
     `Its value is ${lastClosed}`);
 }
 
-SlidingWindow.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
+CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
   console.log('#########');
   console.log('#########SELL',
     this.slidingWindow.getTime(),
@@ -148,3 +147,5 @@ SlidingWindow.prototype.messageSell = function messageSell(beneficePercent, last
   notify(`It's time to sell your ${this.slidingWindow.cryptoName}`,
     `Its Value is ${lastClosed}, \nyou made ${math.round(beneficePercent)}% benefice`);
 }
+
+module.exports = CryptoWatcher;
