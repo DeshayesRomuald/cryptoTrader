@@ -21,8 +21,13 @@ const CryptoWatcher = function CryptoWatcher() {
 
   this.totalSell = 0;
   this.transactionsCompleted = 0;
-
   this.trailingStopPercent = 0;
+
+  this.stdDevMultiplier = 4;
+  this.authorizedDiffPosNeg = -5;
+  this.minProgressionOnWindow = 1.5;
+  this.minPositiveSecHalf = 4;
+  this.maxNegativeLastFive = 2;
 };
 
 SlidingWindow.prototype.add = function add(cryptoOhlc) {
@@ -42,7 +47,7 @@ SlidingWindow.prototype.estimateTrailingStopPercent = function estimateTrailingS
 
   // ~99% of candle size in window are smaller than this, should
   // generally 2 iterations going down before selling
-  this.estimateTrailingStopPercent = stdDevCandleSizePercent * 4;
+  this.estimateTrailingStopPercent = stdDevCandleSizePercent * this.stdDevMultiplier;
   return this.trailingStopPercent;
 }
 
@@ -63,10 +68,10 @@ SlidingWindow.prototype.decide = function decide() {
 
   // more positive than negative in the window and a progression over 1.5% on window
   // BUY
-  if (differencePosNeg > -5 &&
-    this.slidingWindow.percentageProgressionOnWindow > 1.5 &&
-    this.slidingWindow.numberPositiveSecondHalf > 4 &&
-    this.slidingWindow.numberNegativeLastFive <= 2 &&
+  if (differencePosNeg > this.authorizedDiffPosNeg &&
+    this.slidingWindow.percentageProgressionOnWindow > this.minProgressionOnWindow &&
+    this.slidingWindow.numberPositiveSecondHalf > this.minPositiveSecHalf &&
+    this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
     !this.bought) {
     messageBuy(differencePosNeg, lastClosed);
     console.log('#########previousPositivesOrZero', this.slidingWindow.previousPositivesOrZero);
