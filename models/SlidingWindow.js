@@ -43,6 +43,8 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.minPositiveSecHalf;
   this.maxNegativeLastFive;
 
+  this.toStringMethod = 'full';
+
 };
 // **********************************************************************************
 
@@ -155,28 +157,30 @@ SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC()
 SlidingWindow.prototype.toString = function toString() {
   console.log('');
   console.log('######### Sliding Window', this.cryptoName, ' @', this.getTime());
-  console.log('------');
-  this.cryptoValues.forEach((elem, index) => {
-    console.log('#',
-      index,
-      '[Open :',
-      elem.open,
-      '] [Close :',
-      elem.close,
-      '] [Candle Size :',
-      math.round(elem.closeMinusOpen),
-      ']');
-  });
-  console.log('------');
-  console.log('Difference pos/neg :', this.previousPositivesOrZero - this.previousNegatives, ` → > ${this.authorizedDiffPosNeg}`);
-  console.log('prog Window :', math.round(this.percentageProgressionOnWindow),
-    `% → > ${this.minProgressionOnWindow}%`);
-  console.log('pos2eH :', this.numberPositiveSecondHalf,
-    `→ > ${this.minPositiveSecHalf}`);
-  console.log('negLast5 :', this.numberNegativeLastFive,
-    `→ < ${this.maxNegativeLastFive}`);
-  console.log('#########');
-  console.log('');
+  if (this.toStringMethod === 'full') {
+    console.log('------');
+    this.cryptoValues.forEach((elem, index) => {
+      console.log('#',
+        index,
+        '[Open :',
+        elem.open,
+        '] [Close :',
+        elem.close,
+        '] [Candle Size :',
+        math.round(elem.closeMinusOpen),
+        ']');
+    });
+    console.log('------');
+    console.log('Difference pos/neg :', this.previousPositivesOrZero - this.previousNegatives, ` → > ${this.authorizedDiffPosNeg}`);
+    console.log('prog Window :', math.round(this.percentageProgressionOnWindow),
+      `% → > ${this.minProgressionOnWindow}%`);
+    console.log('pos2eH :', this.numberPositiveSecondHalf,
+      `→ > ${this.minPositiveSecHalf}`);
+    console.log('negLast5 :', this.numberNegativeLastFive,
+      `→ < ${this.maxNegativeLastFive}`);
+    console.log('#########');
+    console.log('');
+  }
 }
 
 

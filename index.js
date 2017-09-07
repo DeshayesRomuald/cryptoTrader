@@ -28,6 +28,13 @@ const cryptoWatcherXMR = cryptoWatcherFactory.create('Monero');
 const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin Cash');
 const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple');
 
+cryptoWatcherLTC.slidingWindow.toStringMethod = 'light';
+cryptoWatcherBTC.slidingWindow.toStringMethod = 'light';
+cryptoWatcherETH.slidingWindow.toStringMethod = 'light';
+cryptoWatcherXMR.slidingWindow.toStringMethod = 'light';
+cryptoWatcherBCH.slidingWindow.toStringMethod = 'light';
+cryptoWatcherXRP.slidingWindow.toStringMethod = 'light';
+
 while (true) {
   try {
     const time = getTimeServer();
