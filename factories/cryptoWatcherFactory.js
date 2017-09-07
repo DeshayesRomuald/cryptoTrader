@@ -7,6 +7,12 @@ function create(name) {
   }
   const cryptoWatcher = new CryptoWatcher();
   cryptoWatcher.slidingWindow = slidingWindowFactory.create(name);
+
+  cryptoWatcher.slidingWindow.authorizedDiffPosNeg = cryptoWatcher.authorizedDiffPosNeg;
+  cryptoWatcher.slidingWindow.minProgressionOnWindow = cryptoWatcher.minProgressionOnWindow;
+  cryptoWatcher.slidingWindow.minPositiveSecHalf = cryptoWatcher.minPositiveSecHalf;
+  cryptoWatcher.slidingWindow.maxNegativeLastFive = cryptoWatcher.maxNegativeLastFive;
+
   return cryptoWatcher;
 }
 

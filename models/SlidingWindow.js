@@ -38,6 +38,11 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   // get time of last inserted cryptoOHLC
   this.timeLastOHLC;
 
+  this.authorizedDiffPosNeg;
+  this.minProgressionOnWindow;
+  this.minPositiveSecHalf;
+  this.maxNegativeLastFive;
+
 };
 // **********************************************************************************
 
@@ -163,8 +168,13 @@ SlidingWindow.prototype.toString = function toString() {
       ']');
   });
   console.log('------');
-  console.log('pos :', this.previousPositivesOrZero);
-  console.log('pos2eH :', this.numberPositiveSecondHalf);
+  console.log('Difference pos/neg :', this.previousPositivesOrZero - this.previousNegatives, ` → > ${this.authorizedDiffPosNeg}`);
+  console.log('prog Window :', math.round(this.percentageProgressionOnWindow),
+    `% → > ${this.minProgressionOnWindow}%`);
+  console.log('pos2eH :', this.numberPositiveSecondHalf,
+    `→ > ${this.minPositiveSecHalf}`);
+  console.log('negLast5 :', this.numberNegativeLastFive,
+    `→ < ${this.maxNegativeLastFive}`);
   console.log('#########');
   console.log('');
 }
