@@ -123,7 +123,9 @@ CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastC
   console.log('');
   console.log('#########');
   console.log('#########');
-  console.log('#########BUY', this.slidingWindow.getTime(), '@', lastClosed, '<<<<<');
+  console.log('#########BUY',
+    this.slidingWindow.cryptoName,
+    this.slidingWindow.getTime(), '@', lastClosed, '<<<<<');
   console.log('[Prog : ]', math.round(this.slidingWindow.percentageProgressionOnWindow));
   console.log('[Max Amplitude : ]', math.round(this.slidingWindow.maxAmplitudeOnWindow));
   console.log('[Diff pos neg : ]', math.round(differencePosNeg));
@@ -135,6 +137,7 @@ CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastC
 CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
   console.log('#########');
   console.log('#########SELL',
+    this.slidingWindow.cryptoName,
     this.slidingWindow.getTime(),
     '@', lastClosed, '>>>>>');
   console.log('[Benefice :] ', math.round(beneficePercent), '%');
