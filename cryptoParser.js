@@ -20,21 +20,24 @@ function httpGetSync(theUrl, callback) {
 }
 
 // while (true) {
-    // getSpread();
-    // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
-    // const ohlc = parseOHLC('XXMRZEUR', 1, 1503933600);
-    // const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
-    // const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
-    // const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
-    const ohlc = parseOHLC('BCHEUR', 1, 1503933600);
-    // const ohlc = clone(xrpOHLC);
-    // const ohlc = clone(bchOHLC);
+// getSpread();
+// const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
+// const ohlc = parseOHLC('XXMRZEUR', 5, 1503933600);
+// const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
+// const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
+// const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
+// const ohlc = getOHLC('BCHEUR', 1, 1504767432);
+// const ohlc = clone(xrpOHLC);
+// const ohlc = clone(bchOHLC);
 
-    // to push in json file use this
-    writeToFile(ohlc);
+// const unixTime = getTimeServer();
+// console.log('#########unixTime', unixTime);
 
-    // marketValueEvolution(ohlc)
-    // sleep(200000);
+// to push in json file use this
+// writeToFile(ohlc);
+
+// marketValueEvolution(ohlc)
+// sleep(200000);
 
 // }
 
@@ -75,7 +78,7 @@ function parseOHLC(pair = 'BCHEUR', timeIntervalInMin = 1, sinceValue = null) {
             return element;
         });
 
-        console.log('#########processedValues', JSON.stringify(processedValues, null, 2));
+        // console.log('#########processedValues', JSON.stringify(processedValues, null, 2));
         return processedValues;
     });
 
@@ -90,6 +93,16 @@ function writeToFile(array) {
         }
         console.log("The file was saved!");
     });
+}
+
+function getTimeServer() {
+    let request = `https://api.kraken.com/0/public/Time`;
+    let unixTime = null;
+    httpGetSync(request, (res) => {
+        const rawTime = JSON.parse(res);
+        unixTime = rawTime.result.unixtime;
+    });
+    return unixTime;
 }
 
 
@@ -123,27 +136,11 @@ function getOHLC(pair = 'BCHEUR', timeIntervalInMin = 1, sinceValue = null) {
     httpGetSync(request, (res) => {
         const rawValues = JSON.parse(res);
 
-        console.log('#########rawVal', JSON.stringify(rawValues, null, 2));
+        // console.log('#########rawVal', JSON.stringify(rawValues, null, 2));
         const values = rawValues.result[pair];
-        const lastValue = values[values.length - 1];
-        // console.log('#########Number of values', JSON.stringify(values.length, null, 2));
-        // console.log('#########lastValue', JSON.stringify(lastValue, null, 2));
-
         processedValues = values.map(element => {
-            const currentBlock = {
-                time: element[0],
-                open: element[1],
-                high: element[2],
-                low: element[3],
-                close: element[4],
-                vwap: element[5],
-                volume: element[6],
-                count: element[7],
-                date: new Date(element[0] * 1000).toLocaleTimeString(),
-                amplitude: element[2] - element[3],
-                closeMinusOpen: element[4] - element[1],
-            }
-            return currentBlock;
+            element.push(new Date(element[0] * 1000).toLocaleTimeString());
+            return element;
         });
 
         // console.log('#########processedValues', JSON.stringify(processedValues, null, 2));
@@ -153,9 +150,6 @@ function getOHLC(pair = 'BCHEUR', timeIntervalInMin = 1, sinceValue = null) {
     return processedValues;
 }
 
-module.exports = {
-    getOHLC,
-};
 
 /**
  *
@@ -239,3 +233,8 @@ function getSpread(pair = 'BCHEUR') {
     });
     console.log(`get pair ${pair} :`, lastPair[2]);
 }
+
+module.exports = {
+    getOHLC,
+    getTimeServer,
+};
