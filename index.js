@@ -28,12 +28,12 @@ const cryptoWatcherXMR = cryptoWatcherFactory.create('Monero');
 const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin Cash');
 const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple');
 
-cryptoWatcherLTC.slidingWindow.toStringMethod = 'light';
-cryptoWatcherBTC.slidingWindow.toStringMethod = 'full';
-cryptoWatcherETH.slidingWindow.toStringMethod = 'light';
-cryptoWatcherXMR.slidingWindow.toStringMethod = 'light';
-cryptoWatcherBCH.slidingWindow.toStringMethod = 'light';
-cryptoWatcherXRP.slidingWindow.toStringMethod = 'light';
+cryptoWatcherLTC.slidingWindow.toStringMethod = 'none';
+cryptoWatcherBTC.slidingWindow.toStringMethod = 'none';
+cryptoWatcherETH.slidingWindow.toStringMethod = 'none';
+cryptoWatcherXMR.slidingWindow.toStringMethod = 'none';
+cryptoWatcherBCH.slidingWindow.toStringMethod = 'none';
+cryptoWatcherXRP.slidingWindow.toStringMethod = 'none';
 
 while (true) {
   try {
