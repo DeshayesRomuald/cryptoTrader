@@ -14,7 +14,7 @@ const xmr7 = require('./training-data/XMREUR_7_9_17.json');
 const xmr5m = require('./training-data/XMREUR5min.json');
 
 const math = require('./utils/math');
-const { notify } = require('./utils/notifier');
+const { notify, setUseNotification } = require('./utils/notifier');
 const cryptoWatcherFactory = require('./factories/cryptoWatcherFactory');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
 
@@ -31,9 +31,12 @@ const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple');
 cryptoWatcherLTC.slidingWindow.toStringMethod = 'none';
 cryptoWatcherBTC.slidingWindow.toStringMethod = 'none';
 cryptoWatcherETH.slidingWindow.toStringMethod = 'none';
-cryptoWatcherXMR.slidingWindow.toStringMethod = 'none';
+cryptoWatcherXMR.slidingWindow.toStringMethod = 'light';
 cryptoWatcherBCH.slidingWindow.toStringMethod = 'none';
 cryptoWatcherXRP.slidingWindow.toStringMethod = 'none';
+
+setUseNotification(true);
+
 
 while (true) {
   try {

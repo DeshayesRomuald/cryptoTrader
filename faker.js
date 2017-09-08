@@ -12,9 +12,10 @@ const ltcOhlc15m = require('./training-data/LTCEUR15min.json');
 const eth5m = require('./training-data/ETH5min.json');
 const xmr7 = require('./training-data/XMREUR_7_9_17.json');
 const xmr5m = require('./training-data/XMREUR5min.json');
+const xmr8 = require('./training-data/XMR_8_9.json');
 
 const math = require('./utils/math');
-const { notify } = require('./utils/notifier');
+const { notify, setUseNotification } = require('./utils/notifier');
 const cryptoWatcherFactory = require('./factories/cryptoWatcherFactory');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
 
@@ -32,6 +33,7 @@ const cryptoWatcherLTC15m = cryptoWatcherFactory.create('LTC 15m');
 const cryptoWatcherETH5m = cryptoWatcherFactory.create('ETH5m');
 const cryptoWatcherXMR7 = cryptoWatcherFactory.create('XMR7');
 const cryptoWatcherXMR5m = cryptoWatcherFactory.create('XMR5m');
+const cryptoWatcherxmr8 = cryptoWatcherFactory.create('xmr8');
 
 cryptoWatcherBCH.slidingWindow.toStringMethod = 'none';
 cryptoWatcherBCH6.slidingWindow.toStringMethod = 'none';
@@ -42,6 +44,7 @@ cryptoWatcherLTC15m.slidingWindow.toStringMethod = 'none';
 cryptoWatcherETH5m.slidingWindow.toStringMethod = 'none';
 cryptoWatcherXMR7.slidingWindow.toStringMethod = 'none';
 cryptoWatcherXMR5m.slidingWindow.toStringMethod = 'none';
+cryptoWatcherxmr8.slidingWindow.toStringMethod = 'light';
 
 const bchOhlcC = clone(bchOhlc);
 const bchOhlc6C = clone(bchOhlc6);
@@ -52,37 +55,46 @@ const ltcOhlc15mC = clone(ltcOhlc15m);
 const eth5mC = clone(eth5m);
 const xmr7C = clone(xmr7);
 const xmr5mC = clone(xmr5m);
+const xmr8C = clone(xmr8);
+
+setUseNotification(false);
 
 for (let y = 0; y < bchOhlcC.length; y++) {
+    try {
 
-    // const cryptoOhlc1 = cryptoOHLCFactory.create(bchOhlcC[y]);
-    // cryptoWatcherBCH.add(cryptoOhlc1);
+        // const cryptoOhlc1 = cryptoOHLCFactory.create(bchOhlcC[y]); // NEG - 0.26
+        // cryptoWatcherBCH.add(cryptoOhlc1);
 
-    // const cryptoOhlc2 = cryptoOHLCFactory.create(bchOhlc6C[y]);
-    // cryptoWatcherBCH6.add(cryptoOhlc2);
+        // const cryptoOhlc2 = cryptoOHLCFactory.create(bchOhlc6C[y]);
+        // cryptoWatcherBCH6.add(cryptoOhlc2);
 
-    const cryptoOhlc3 = cryptoOHLCFactory.create(ethOhlcC[y]);
-    cryptoWatcherETH.add(cryptoOhlc3);
+        // const cryptoOhlc3 = cryptoOHLCFactory.create(ethOhlcC[y]); // NEG -0.08
+        // cryptoWatcherETH.add(cryptoOhlc3);
 
-    const cryptoOhlc4 = cryptoOHLCFactory.create(ltcOhlcC[y]);
-    cryptoWatcherLTC.add(cryptoOhlc4);
+        // const cryptoOhlc4 = cryptoOHLCFactory.create(ltcOhlcC[y]); // NEG 1.5
+        // cryptoWatcherLTC.add(cryptoOhlc4);
 
-    // const cryptoOhlc5 = cryptoOHLCFactory.create(ltcOhlc6C[y]);
-    // cryptoWatcherLTC6.add(cryptoOhlc5);
+        // const cryptoOhlc5 = cryptoOHLCFactory.create(ltcOhlc6C[y]); // NEG -3.25
+        // cryptoWatcherLTC6.add(cryptoOhlc5);
 
-    // const cryptoOhlc6 = cryptoOHLCFactory.create(ltcOhlc15mC[y]);
-    // cryptoWatcherLTC15m.add(cryptoOhlc6);
+        // const cryptoOhlc6 = cryptoOHLCFactory.create(ltcOhlc15mC[y]); // POS 10
+        // cryptoWatcherLTC15m.add(cryptoOhlc6);
 
-    // const cryptoOhlc7 = cryptoOHLCFactory.create(eth5mC[y]);
-    // cryptoWatcherETH5m.add(cryptoOhlc7);
+        // const cryptoOhlc7 = cryptoOHLCFactory.create(eth5mC[y]); // NEG -5.66
+        // cryptoWatcherETH5m.add(cryptoOhlc7);
 
-    // const cryptoOhlc8 = cryptoOHLCFactory.create(xmr7C[y]);
-    // cryptoWatcherXMR7.add(cryptoOhlc8);
+        // const cryptoOhlc8 = cryptoOHLCFactory.create(xmr7C[y]); //NEG -0.26
+        // cryptoWatcherXMR7.add(cryptoOhlc8);
 
-    // const cryptoOhlc9 = cryptoOHLCFactory.create(xmr5mC[y]);
-    // cryptoWatcherXMR5m.add(cryptoOhlc9);
+        // const cryptoOhlc9 = cryptoOHLCFactory.create(xmr5mC[y]); // NEG -2.28
+        // cryptoWatcherXMR5m.add(cryptoOhlc9);
 
+        const cryptoOhlc10 = cryptoOHLCFactory.create(xmr8C[y]); // POS 4.03%
+        cryptoWatcherxmr8.add(cryptoOhlc10);
 
-    sleep(SLEEP_BETWEEN_DATA);
+        sleep(SLEEP_BETWEEN_DATA);
+    } catch (err) {
+        console.log('err', err);
+    }
 
 }
