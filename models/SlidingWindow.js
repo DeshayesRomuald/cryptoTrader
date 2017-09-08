@@ -37,6 +37,8 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.numberNegativeLastFive;
   // get time of last inserted cryptoOHLC
   this.timeLastOHLC;
+  // difference between mean value and lowest value
+  this.differenceMeanLowest;
 
   this.authorizedDiffPosNeg;
   this.minProgressionOnWindow;
@@ -92,6 +94,7 @@ function addCryptoOHLC(cryptoOhlc) {
   this.numberPositiveSecondHalf = calculateNumberPositiveSecondHalf(this);
   this.numberNegativeLastFive = calculateNumberNegativeLastFive(this);
   this.calculateTimeLastOHLC();
+  this.calculateDifferenceMeanLowest()
 
   this.toString();
 
@@ -148,6 +151,19 @@ SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(crypt
  *  hasAlreadyBeenAdded
  *
  ** *********************************************************************************/
+SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
+  this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues * 100;
+}
+// **********************************************************************************
+
+
+
+
+
+/** *********************************************************************************
+ *  hasAlreadyBeenAdded
+ *
+ ** *********************************************************************************/
 SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC() {
   this.timeLastOHLC = this.cryptoValues[this.cryptoValues.length - 1].time;
   return this.timeLastOHLC;
@@ -155,9 +171,14 @@ SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC()
 // **********************************************************************************
 
 SlidingWindow.prototype.toString = function toString() {
-  if (this.toStringMethod === 'full' || this.toStringMethod === 'light') {
+  if (this.toStringMethod === 'full') {
     console.log('');
-    console.log('######### Sliding Window', this.cryptoName, ' @', this.getTime());
+  }
+  if (this.toStringMethod === 'full' || this.toStringMethod === 'light') {
+    console.log('######### Sliding Window',
+      this.cryptoName,
+      ' @', this.getTime(),
+      '[Mean :', math.round(this.meanCryptoValues,4), ']');
   }
   if (this.toStringMethod === 'full') {
     console.log('------');
@@ -206,9 +227,9 @@ const calculateMeanValue = function calculateMeanValue(slidingWindow) {
  *
  ** *********************************************************************************/
 const calculatePercentageProgressionOnWindow = function calculatePercentageProgressionOnWindow(slidingWindow) {
-  const firstC = slidingWindow.cryptoValues[0].close;
-  const lastC = slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close;
-  return (lastC - firstC) / firstC * 100;
+  const meanFirst = Math.abs(slidingWindow.cryptoValues[0].close + slidingWindow.cryptoValues[0].open) / 2;
+  const meanLast = Math.abs(slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close + slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close) / 2;
+  return (meanLast - meanFirst) / meanFirst * 100;
 }
 // **********************************************************************************
 
