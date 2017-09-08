@@ -44,7 +44,7 @@ cryptoWatcherLTC15m.slidingWindow.toStringMethod = 'none';
 cryptoWatcherETH5m.slidingWindow.toStringMethod = 'none';
 cryptoWatcherXMR7.slidingWindow.toStringMethod = 'none';
 cryptoWatcherXMR5m.slidingWindow.toStringMethod = 'none';
-cryptoWatcherxmr8.slidingWindow.toStringMethod = 'light';
+cryptoWatcherxmr8.slidingWindow.toStringMethod = 'none';
 
 const bchOhlcC = clone(bchOhlc);
 const bchOhlc6C = clone(bchOhlc6);
@@ -62,35 +62,35 @@ setUseNotification(false);
 for (let y = 0; y < bchOhlcC.length; y++) {
     try {
 
-        // const cryptoOhlc1 = cryptoOHLCFactory.create(bchOhlcC[y]); // NEG - 0.26
+        // const cryptoOhlc1 = cryptoOHLCFactory.create(bchOhlcC[y]); // NEG - 0.26 / 0
         // cryptoWatcherBCH.add(cryptoOhlc1);
 
-        // const cryptoOhlc2 = cryptoOHLCFactory.create(bchOhlc6C[y]);
+        // const cryptoOhlc2 = cryptoOHLCFactory.create(bchOhlc6C[y]); // / POS 5.98
         // cryptoWatcherBCH6.add(cryptoOhlc2);
 
-        // const cryptoOhlc3 = cryptoOHLCFactory.create(ethOhlcC[y]); // NEG -0.08
+        // const cryptoOhlc3 = cryptoOHLCFactory.create(ethOhlcC[y]); // NEG -0.08 / POS 1.73
         // cryptoWatcherETH.add(cryptoOhlc3);
 
-        // const cryptoOhlc4 = cryptoOHLCFactory.create(ltcOhlcC[y]); // NEG 1.5
+        // const cryptoOhlc4 = cryptoOHLCFactory.create(ltcOhlcC[y]); // NEG 1.5 / POS 7.58
         // cryptoWatcherLTC.add(cryptoOhlc4);
 
-        // const cryptoOhlc5 = cryptoOHLCFactory.create(ltcOhlc6C[y]); // NEG -3.25
+        // const cryptoOhlc5 = cryptoOHLCFactory.create(ltcOhlc6C[y]); // NEG -3.25 / POS 1.39
         // cryptoWatcherLTC6.add(cryptoOhlc5);
 
-        // const cryptoOhlc6 = cryptoOHLCFactory.create(ltcOhlc15mC[y]); // POS 10
+        // const cryptoOhlc6 = cryptoOHLCFactory.create(ltcOhlc15mC[y]); // POS 10 / POS 6.29
         // cryptoWatcherLTC15m.add(cryptoOhlc6);
 
-        // const cryptoOhlc7 = cryptoOHLCFactory.create(eth5mC[y]); // NEG -5.66
+        // const cryptoOhlc7 = cryptoOHLCFactory.create(eth5mC[y]); // NEG -5.66 / POS 4.76
         // cryptoWatcherETH5m.add(cryptoOhlc7);
 
-        // const cryptoOhlc8 = cryptoOHLCFactory.create(xmr7C[y]); //NEG -0.26
+        // const cryptoOhlc8 = cryptoOHLCFactory.create(xmr7C[y]); //NEG -0.26 / POS 0.1
         // cryptoWatcherXMR7.add(cryptoOhlc8);
 
-        // const cryptoOhlc9 = cryptoOHLCFactory.create(xmr5mC[y]); // NEG -2.28
+        // const cryptoOhlc9 = cryptoOHLCFactory.create(xmr5mC[y]); // NEG -2.28 / POS 8.25
         // cryptoWatcherXMR5m.add(cryptoOhlc9);
 
-        const cryptoOhlc10 = cryptoOHLCFactory.create(xmr8C[y]); // POS 4.03%
-        cryptoWatcherxmr8.add(cryptoOhlc10);
+        // const cryptoOhlc10 = cryptoOHLCFactory.create(xmr8C[y]); // POS 4.03% / POS 4.27
+        // cryptoWatcherxmr8.add(cryptoOhlc10);
 
         sleep(SLEEP_BETWEEN_DATA);
     } catch (err) {
