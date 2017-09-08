@@ -19,6 +19,7 @@ function httpGetSync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
+
 // while (true) {
 // getSpread();
 // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
