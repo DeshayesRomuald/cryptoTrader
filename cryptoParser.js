@@ -21,24 +21,21 @@ function httpGetSync(theUrl, callback) {
 
 
 // while (true) {
-// getSpread();
-// const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
-// const ohlc = parseOHLC('XXMRZEUR', 5, 1503933600);
-// const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
-// const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
-// const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
-// const ohlc = getOHLC('BCHEUR', 1, 1504767432);
-// const ohlc = clone(xrpOHLC);
-// const ohlc = clone(bchOHLC);
+    // getSpread();
+    // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
+    // const ohlc = parseOHLC('XXMRZEUR', 5, 1503933600);
+    // const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
+    // const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
+    // const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
+    // const ohlc = getOHLC('XXMRZEUR', 1, 1504767432);
+    // const ohlc = clone(xrpOHLC);
+    // const ohlc = clone(bchOHLC);
 
-// const unixTime = getTimeServer();
-// console.log('#########unixTime', unixTime);
+    // to push in json file use this
+    // writeToFile(ohlc);
 
-// to push in json file use this
-// writeToFile(ohlc);
-
-// marketValueEvolution(ohlc)
-// sleep(200000);
+    // marketValueEvolution(ohlc)
+    // sleep(200000);
 
 // }
 
