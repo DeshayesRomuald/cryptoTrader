@@ -169,7 +169,7 @@ SlidingWindow.prototype.toString = function toString() {
         '] [Close :',
         elem.close,
         '] [Candle Size :',
-        math.round(elem.closeMinusOpen),
+        math.round(elem.closeMinusOpen, 5),
         ']');
     });
     console.log('------');
@@ -202,11 +202,11 @@ const calculateMeanValue = function calculateMeanValue(slidingWindow) {
 
 
 /** *********************************************************************************
- *  Helper;
+ *  calculate progression in % between first and last close value
  *
  ** *********************************************************************************/
 const calculatePercentageProgressionOnWindow = function calculatePercentageProgressionOnWindow(slidingWindow) {
-  const firstC = slidingWindow.cryptoValues[0].open;
+  const firstC = slidingWindow.cryptoValues[0].close;
   const lastC = slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close;
   return (lastC - firstC) / firstC * 100;
 }
@@ -220,7 +220,7 @@ const calculatePercentageProgressionOnWindow = function calculatePercentageProgr
  *
  ** *********************************************************************************/
 const calculateMinValueOnWindow = function calculateMinValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].close)
+  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].low)
 }
 // **********************************************************************************
 
@@ -232,7 +232,7 @@ const calculateMinValueOnWindow = function calculateMinValueOnWindow(slidingWind
  *
  ** *********************************************************************************/
 const calculateMaxValueOnWindow = function calculateMaxValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.max(acc, cur.low), slidingWindow.cryptoValues[0].close)
+  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.max(acc, cur.high), slidingWindow.cryptoValues[0].high)
 }
 // **********************************************************************************
 
@@ -293,14 +293,14 @@ const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePerce
 
 
 /** *********************************************************************************
- *  Helper;
+ *  count values that are strictly positive in second half of window
  *
  ** *********************************************************************************/
 const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecondHalf(slidingWindow) {
   const windowLength = slidingWindow.cryptoValues.length;
   const values = slidingWindow.cryptoValues;
   let numberPositive = 0;
-  for (let y = windowLength - 1; y > windowLength / 2; y--) {
+  for (let y = windowLength - 1; y >= windowLength / 2; y--) {
     if (values[y].closeMinusOpen > 0) {
       numberPositive++;
     }
@@ -327,7 +327,7 @@ const calculateNumberNegativeLastFive = function calculateNumberNegativeLastFive
     if (values[y].closeMinusOpen < 0) {
       numberNegative++;
     }
-    if (count >= 4) { //exit the loop in a dirty way
+    if (count > 4) { //exit the loop in a dirty way
       y = -1;
     }
   }

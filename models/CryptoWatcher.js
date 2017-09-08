@@ -23,7 +23,7 @@ const CryptoWatcher = function CryptoWatcher() {
   this.transactionsCompleted = 0;
   this.trailingStopPercent = 0;
 
-  this.stdDevMultiplier = 4;
+  this.stdDevMultiplier = 2;
   this.authorizedDiffPosNeg = -5;
   this.minProgressionOnWindow = 1.5;
   this.minPositiveSecHalf = 4;
@@ -32,21 +32,28 @@ const CryptoWatcher = function CryptoWatcher() {
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
-  this.estimateTrailingStopPercent();
   this.decide();
 
   sleep(SLEEP_BETWEEN_DATA);
 
 }
 
-
+/**
+ * could be recalculated every iteration, such that when rate is above bought value, trailing stop gets tighter
+ * this way, we could limit the loss. 
+ * I have noted that sometimes, value drops quite a bit just after buying, so maybe should i let it raise back,
+ * if i can not understand why it drops just after i bought
+ * 
+ * for example i could try to predict that next tick is going to be a raise of rate, then set the trailing stop
+ * directly to a very small value above buy value (supposing first guess was right and it went up)
+ */
 CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingStopPercent() {
   const meanStickSize = this.slidingWindow.meanCandleSizeInPercent;
   const stdDevCandleSizePercent = this.slidingWindow.stdDevCandleSizePercent;
 
   // ~99% of candle size in window are smaller than this, should
   // generally 2 iterations going down before selling
-  this.trailingStopPercent = stdDevCandleSizePercent * this.stdDevMultiplier;
+  this.trailingStopPercent = 1; //meanStickSize * this.stdDevMultiplier;
   return this.trailingStopPercent;
 }
 
@@ -62,26 +69,22 @@ CryptoWatcher.prototype.decide = function decide() {
   }
 
   const lastClosed = this.slidingWindow.getLast().close;
-  // console.log('#########VALUE', JSON.stringify(lastClosed, null, 2));
-  // console.log('#########differencePosNeg', JSON.stringify(differencePosNeg, null, 2));
-
-  // more positive than negative in the window and a progression over 1.5% on window
-  // BUY
+  // BUY CRETIERIA
   if (differencePosNeg > this.authorizedDiffPosNeg &&
     this.slidingWindow.percentageProgressionOnWindow > this.minProgressionOnWindow &&
     this.slidingWindow.numberPositiveSecondHalf > this.minPositiveSecHalf &&
     this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
     !this.bought) {
-    this.messageBuy(differencePosNeg, lastClosed);
-    console.log('#########previousPositivesOrZero', this.slidingWindow.previousPositivesOrZero);
-    console.log('#########numberPositiveSecondHalf', this.slidingWindow.numberPositiveSecondHalf);
-    sleep(SLEEP_BETWEEN_TRANSACTION);
+      // trailing stop width should be based on std dev at buy, not reevaluated every iterarion
+      this.estimateTrailingStopPercent();
 
-
-    this.buyValue = lastClosed;
-    this.bought = true;
-    this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
-    this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+      this.buyValue = lastClosed;
+      this.bought = true;
+      this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
+      this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+      
+      this.messageBuy(differencePosNeg, lastClosed);
+      sleep(SLEEP_BETWEEN_TRANSACTION);
   }
 
   // if it still raises, set the new minimum to the new progress
@@ -99,8 +102,7 @@ CryptoWatcher.prototype.decide = function decide() {
     }
   }
 
-  // has lower more than 1%  wrt trailing stop then sell
-  // SELL
+  // SELL CRITERIA
   else if (this.bought && lastClosed < this.limitToSell) {
 
     const beneficeAbsolute = lastClosed - this.buyValue;
@@ -113,7 +115,6 @@ CryptoWatcher.prototype.decide = function decide() {
     sleep(SLEEP_BETWEEN_TRANSACTION);
 
     this.bought = false;
-
   }
 
   this.previousValue = lastClosed;
@@ -121,21 +122,32 @@ CryptoWatcher.prototype.decide = function decide() {
 
 CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastClosed) {
   console.log('');
-  console.log('#########');
-  console.log('#########');
+  console.log('');
+  console.log('#################################################################################');
+  console.log('#################################################################################');
+  console.log('#########                                                                       #');  
   console.log('#########BUY',
     this.slidingWindow.cryptoName,
     this.slidingWindow.getTime(), '@', lastClosed, '<<<<<');
   console.log('[Prog : ]', math.round(this.slidingWindow.percentageProgressionOnWindow));
   console.log('[Max Amplitude : ]', math.round(this.slidingWindow.maxAmplitudeOnWindow));
   console.log('[Diff pos neg : ]', math.round(differencePosNeg));
+  console.log('[previousPositivesOrZero ]', this.slidingWindow.previousPositivesOrZero);
+  console.log('[numberPositiveSecondHalf]', this.slidingWindow.numberPositiveSecondHalf);
+  console.log('[Neg last 5]', this.slidingWindow.numberNegativeLastFive);
+  console.log('[Trailing stop]', this.trailingStopPercent, '%');
+  console.log('[Limit Sell]', this.limitToSell);
+  console.log('#########                                                                       #');  
+  console.log('#################################################################################');
+  
+  
 
   notify(`You should BUY some ${this.slidingWindow.cryptoName}`,
     `Its value is ${lastClosed}`);
 }
 
 CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
-  console.log('#########');
+  console.log('#########                                                                       #');
   console.log('#########SELL',
     this.slidingWindow.cryptoName,
     this.slidingWindow.getTime(),
@@ -144,7 +156,10 @@ CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, last
   console.log('[Total Sell :] ',
     math.round(this.totalSell),
     `% in ${this.transactionsCompleted} transactions`);
-  console.log('#########');
+  console.log('#########                                                                       #');
+  console.log('#################################################################################');
+  console.log('#################################################################################');  
+  console.log('');
   console.log('');
 
   notify(`It's time to sell your ${this.slidingWindow.cryptoName}`,
