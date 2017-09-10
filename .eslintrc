@@ -1,0 +1,31 @@
+{
+  "extends": "airbnb-base",
+  "globals": {
+    "describe": true,
+    "it": true,
+    "before": true
+  },
+  "rules": {
+    "no-use-before-define": "off",
+    "max-len": "off",
+    "comma-dangle": ["error", {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "always-multiline",
+      "exports": "always-multiline",
+      "functions": "never"
+    }],
+    "curly": ["error", "all"],
+    "no-param-reassign": ["error", { "props": false }],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
+    "no-shadow": ["error", {
+      "allow": [
+        "err",
+        "callback",
+        "res",
+        "body",
+        "token"
+      ]
+    }]
+  }
+}

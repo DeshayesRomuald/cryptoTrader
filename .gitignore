@@ -1,2 +1,31 @@
-node_modules/
+npm-debug.log
+/node_modules
+bower_components
+dist
+tmp
+gitignore
+.DS_Store
+logfile
+db/pg
+logs/*
+test.js
+test/mytest.js
+.myconfig/*
+!.myconfig/usage.md
+run.sql
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+!**.gitkeep
+
+# trick allow to have auto-completion of ELB env
+api-b2b-dev
+test-b2b-api
+sandbox-b2b-api
+staging-b2b-api
+production-b2b-api
+contact-b2b-api
 .node*
