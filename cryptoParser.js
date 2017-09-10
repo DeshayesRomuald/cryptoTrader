@@ -22,24 +22,11 @@ function httpGetSync(theUrl, callback) {
 const ETH = 'XETHZEUR';
 
 
-// while (true) {
-    // getSpread();
-    // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
-    // const ohlc = parseOHLC('XXMRZEUR', 5, 1503933600);
-    // const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
-    const ohlc = parseOHLC(ETH, 1, 1503933600);
-    // const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
-    // const ohlc = getOHLC('XXMRZEUR', 1, 1504767432);
-    // const ohlc = clone(xrpOHLC);
-    // const ohlc = clone(bchOHLC);
+// const ohlc = parseOHLC(ETH, 1, 1503933600);
 
-    // to push in json file use this
-    writeToFile(ohlc, ETH);
+// to push in json file use this
+// writeToFile(ohlc, ETH);
 
-    // marketValueEvolution(ohlc)
-    // sleep(200000);
-
-// }
 
 /**
  *
