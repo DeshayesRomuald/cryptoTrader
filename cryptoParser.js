@@ -19,20 +19,22 @@ function httpGetSync(theUrl, callback) {
     xmlHttp.send(null);
 }
 
+const ETH = 'XETHZEUR';
+
 
 // while (true) {
     // getSpread();
     // const ohlc = parseOHLC('XXRPZEUR', 5, 1503983600);
     // const ohlc = parseOHLC('XXMRZEUR', 5, 1503933600);
     // const ohlc = parseOHLC('XLTCZEUR', 15, 1503933600);
-    // const ohlc = parseOHLC('XETHZEUR', 1, 1503933600);
+    const ohlc = parseOHLC(ETH, 1, 1503933600);
     // const ohlc = parseOHLC('XETHZEUR', 5, 1503933600);
     // const ohlc = getOHLC('XXMRZEUR', 1, 1504767432);
     // const ohlc = clone(xrpOHLC);
     // const ohlc = clone(bchOHLC);
 
     // to push in json file use this
-    // writeToFile(ohlc);
+    writeToFile(ohlc, ETH);
 
     // marketValueEvolution(ohlc)
     // sleep(200000);
@@ -83,9 +85,10 @@ function parseOHLC(pair = 'BCHEUR', timeIntervalInMin = 1, sinceValue = null) {
     return processedValues;
 }
 
-function writeToFile(array) {
+function writeToFile(array, cryptoName) {
     const arrayString = JSON.stringify(array, null, 2);
-    fs.writeFile("./output.json", arrayString, function (err) {
+    const now = moment().format('DD-MM-YYYY-HH-mm')
+    fs.writeFile(`./training-data/${cryptoName}_${now}.json`, arrayString, function (err) {
         if (err) {
             return console.log(err);
         }
