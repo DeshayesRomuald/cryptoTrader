@@ -45,7 +45,7 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.minPositiveSecHalf;
   this.maxNegativeLastFive;
 
-  this.toStringMethod = 'full';
+  this.toStringMethod = 'none';
 
 };
 // **********************************************************************************
