@@ -23,44 +23,35 @@ const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
 
 const { getOHLC, getTimeServer } = require('./cryptoParser');
 
-const SLEEP_BETWEEN_DATA = 0;
+const cryptoWatchers = [
+    cryptoWatcherFactory.create('Bitcoin cash'),
+    cryptoWatcherFactory.create('Bitcoin cash 6'),
+    cryptoWatcherFactory.create('Ethereum'),
+    cryptoWatcherFactory.create('Litecoin'),
+    cryptoWatcherFactory.create('LTC 6'),
+    cryptoWatcherFactory.create('LTC 15m'),
+    cryptoWatcherFactory.create('ETH5m'),
+    cryptoWatcherFactory.create('XMR7'),
+    cryptoWatcherFactory.create('XMR5m'),
+    cryptoWatcherFactory.create('xmr8'),
+    cryptoWatcherFactory.create('eth8'),
+];
 
+const jsonFiles = [
+    clone(bchOhlc),
+    clone(bchOhlc6),
+    clone(ethOhlc),
+    clone(ltcOhlc),
+    clone(ltcOhlc6),
+    clone(ltcOhlc15m),
+    clone(eth5m),
+    clone(xmr7),
+    clone(xmr5m),
+    clone(xmr8),
+    clone(eth8),
+]
 
-const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin cash');
-const cryptoWatcherBCH6 = cryptoWatcherFactory.create('Bitcoin cash 6');
-const cryptoWatcherETH = cryptoWatcherFactory.create('Ethereum');
-const cryptoWatcherLTC = cryptoWatcherFactory.create('Litecoin');
-const cryptoWatcherLTC6 = cryptoWatcherFactory.create('LTC 6');
-const cryptoWatcherLTC15m = cryptoWatcherFactory.create('LTC 15m');
-const cryptoWatcherETH5m = cryptoWatcherFactory.create('ETH5m');
-const cryptoWatcherXMR7 = cryptoWatcherFactory.create('XMR7');
-const cryptoWatcherXMR5m = cryptoWatcherFactory.create('XMR5m');
-const cryptoWatcherxmr8 = cryptoWatcherFactory.create('xmr8');
-const cryptoWatchereth8 = cryptoWatcherFactory.create('eth8');
-
-cryptoWatcherBCH.slidingWindow.toStringMethod = 'none';
-cryptoWatcherBCH6.slidingWindow.toStringMethod = 'none';
-cryptoWatcherETH.slidingWindow.toStringMethod = 'none';
-cryptoWatcherLTC.slidingWindow.toStringMethod = 'none';
-cryptoWatcherLTC6.slidingWindow.toStringMethod = 'none';
-cryptoWatcherLTC15m.slidingWindow.toStringMethod = 'none';
-cryptoWatcherETH5m.slidingWindow.toStringMethod = 'none';
-cryptoWatcherXMR7.slidingWindow.toStringMethod = 'none';
-cryptoWatcherXMR5m.slidingWindow.toStringMethod = 'none';
-cryptoWatcherxmr8.slidingWindow.toStringMethod = 'none';
-cryptoWatchereth8.slidingWindow.toStringMethod = 'none';
-
-const bchOhlcC = clone(bchOhlc);
-const bchOhlc6C = clone(bchOhlc6);
-const ethOhlcC = clone(ethOhlc);
-const ltcOhlcC = clone(ltcOhlc);
-const ltcOhlc6C = clone(ltcOhlc6);
-const ltcOhlc15mC = clone(ltcOhlc15m);
-const eth5mC = clone(eth5m);
-const xmr7C = clone(xmr7);
-const xmr5mC = clone(xmr5m);
-const xmr8C = clone(xmr8);
-const eth8C = clone(eth8);
+const cryptoOHLCs = [];
 
 setUseNotification(false);
 
@@ -78,62 +69,74 @@ rl.question('Which testset to launch ?', (res) => {
     answer = clone(res);
     rl.close();
 
-    for (let y = 0; y < bchOhlcC.length; y++) {
+    for (let y = 0; y < jsonFiles[0].length; y++) {
         try {
             switch (answer) {
                 case '1':
-                    const cryptoOhlc1 = cryptoOHLCFactory.create(bchOhlcC[y]); // NEG - 0.26 / 0
-                    cryptoWatcherBCH.add(cryptoOhlc1);
+                    const cryptoOhlc1 = cryptoOHLCFactory.create(jsonFiles[0][y]); // NEG - 0.26 / 0
+                    cryptoWatchers[0].add(cryptoOhlc1);
                     break;
                 case '2':
-                    const cryptoOhlc2 = cryptoOHLCFactory.create(bchOhlc6C[y]); // / POS 5.98
-                    cryptoWatcherBCH6.add(cryptoOhlc2);
+                    const cryptoOhlc2 = cryptoOHLCFactory.create(jsonFiles[1][y]); // / POS 5.98
+                    cryptoWatchers[1].add(cryptoOhlc2);
                     break;
 
                 case '3':
-                    const cryptoOhlc3 = cryptoOHLCFactory.create(ethOhlcC[y]); // NEG -0.08 / POS 1.73
-                    cryptoWatcherETH.add(cryptoOhlc3);
+                    const cryptoOhlc3 = cryptoOHLCFactory.create(jsonFiles[2][y]); // NEG -0.08 / POS 1.73
+                    cryptoWatchers[2].add(cryptoOhlc3);
                     break;
                 case '4':
-                    const cryptoOhlc4 = cryptoOHLCFactory.create(ltcOhlcC[y]); // NEG 1.5 / POS 7.58
-                    cryptoWatcherLTC.add(cryptoOhlc4);
+                    const cryptoOhlc4 = cryptoOHLCFactory.create(jsonFiles[3][y]); // NEG 1.5 / POS 7.56
+                    cryptoWatchers[3].add(cryptoOhlc4);
                     break;
                 case '5':
-                    const cryptoOhlc5 = cryptoOHLCFactory.create(ltcOhlc6C[y]); // NEG -3.25 / POS 1.39
-                    cryptoWatcherLTC6.add(cryptoOhlc5);
+                    const cryptoOhlc5 = cryptoOHLCFactory.create(jsonFiles[4][y]); // NEG -3.25 / POS 1.39
+                    cryptoWatchers[4].add(cryptoOhlc5);
                     break;
                 case '6':
-                    const cryptoOhlc6 = cryptoOHLCFactory.create(ltcOhlc15mC[y]); // POS 10 / POS 6.29
-                    cryptoWatcherLTC15m.add(cryptoOhlc6);
+                    const cryptoOhlc6 = cryptoOHLCFactory.create(jsonFiles[5][y]); // POS 10 / POS 6.29
+                    cryptoWatchers[5].add(cryptoOhlc6);
                     break;
                 case '7':
-                    const cryptoOhlc7 = cryptoOHLCFactory.create(eth5mC[y]); // NEG -5.66 / POS 4.76
-                    cryptoWatcherETH5m.add(cryptoOhlc7);
+                    const cryptoOhlc7 = cryptoOHLCFactory.create(jsonFiles[6][y]); // NEG -5.66 / POS 4.76
+                    cryptoWatchers[6].add(cryptoOhlc7);
                     break;
                 case '8':
-                    const cryptoOhlc8 = cryptoOHLCFactory.create(xmr7C[y]); //NEG -0.26 / POS 0.1
-                    cryptoWatcherXMR7.add(cryptoOhlc8);
+                    const cryptoOhlc8 = cryptoOHLCFactory.create(jsonFiles[7][y]); //NEG -0.26 / POS 0.1
+                    cryptoWatchers[7].add(cryptoOhlc8);
                     break;
                 case '9':
-                    const cryptoOhlc9 = cryptoOHLCFactory.create(xmr5mC[y]); // NEG -2.28 / POS 8.25
-                    cryptoWatcherXMR5m.add(cryptoOhlc9);
+                    const cryptoOhlc9 = cryptoOHLCFactory.create(jsonFiles[8][y]); // NEG -2.28 / POS 8.25
+                    cryptoWatchers[8].add(cryptoOhlc9);
                     break;
                 case '10':
-                    const cryptoOhlc10 = cryptoOHLCFactory.create(xmr8C[y]); // POS 4.03% / POS 4.27
-                    cryptoWatcherxmr8.add(cryptoOhlc10);
+                    const cryptoOhlc10 = cryptoOHLCFactory.create(jsonFiles[9][y]); // POS 4.03% / POS 4.27
+                    cryptoWatchers[9].add(cryptoOhlc10);
                     break;
                 case '11':
-                    const cryptoOhlc11 = cryptoOHLCFactory.create(eth8C[y]); // 0
-                    cryptoWatchereth8.add(cryptoOhlc11);
+                    const cryptoOhlc11 = cryptoOHLCFactory.create(jsonFiles[10][y]); // 0
+                    cryptoWatchers[10].add(cryptoOhlc11);
+                    break;
+                default:
+                    for (var i = 0; i < jsonFiles.length; i++) {
+                        const cryptoOhlc11 = cryptoOHLCFactory.create(jsonFiles[i][y]); // 0
+                        cryptoWatchers[i].add(cryptoOhlc11);
+                    }
                     break;
             }
-
-            // sleep(SLEEP_BETWEEN_DATA);
         } catch (err) {
             console.log('err', err);
         }
 
+    } // END OUTER FOR LOOP
+
+    let total = 0;
+    for (var i = 0; i < cryptoWatchers.length; i++) {
+        const totalSelli = cryptoWatchers[i].getTotalSell();
+        total += totalSelli;
+        console.log(`WATCHER `, totalSelli);
     }
+    console.log('TOTAL = ', total);
 
 })
 
