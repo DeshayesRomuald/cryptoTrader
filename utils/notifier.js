@@ -3,7 +3,7 @@ const notifier = require('node-notifier');
 var Sound = require('node-aplay');
 
 // fire and forget:
-const sound = new Sound('../media/sound/3721.mp3');
+  const sound = new Sound('../media/sound/bicycle_bell.wav');
 
 
 
