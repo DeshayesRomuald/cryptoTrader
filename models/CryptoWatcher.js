@@ -28,7 +28,7 @@ const CryptoWatcher = function CryptoWatcher() {
   this.initTrailingStop = 10;
   this.smallerTrailingStop = 1;
   this.trailingStopMultiplier = this.initTrailingStop; // 0.5
-  this.authorizedDiffPosNeg = 4; // 4
+  this.minPositiveOnWindow = 12; // 12
   this.minProgressionOnWindow = 1.1; // 1.1
   this.minPositiveSecHalf = 4; // 4
   this.maxNegativeLastFive = 0; // 1
@@ -67,15 +67,9 @@ CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingS
 // implement a trailing stop
 // as long as it raises, keep it, when it stops, sell it.
 CryptoWatcher.prototype.decide = function decide() {
-  let differencePosNeg = 0;
-
-  if (this.slidingWindow.previousNegatives !== 0) {
-    differencePosNeg = this.slidingWindow.previousPositivesOrZero - this.slidingWindow.previousNegatives;
-  }
-
   const lastClosed = this.slidingWindow.getLast().close;
   // BUY CRETIERIA
-  if (differencePosNeg > this.authorizedDiffPosNeg &&
+  if (this.slidingWindow.previousPositivesOrZero > this.minPositiveOnWindow &&
     this.slidingWindow.percentageProgressionOnWindow > this.minProgressionOnWindow &&
     this.slidingWindow.numberPositiveSecondHalf > this.minPositiveSecHalf &&
     this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
@@ -89,7 +83,7 @@ CryptoWatcher.prototype.decide = function decide() {
       this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
       this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
 
-      this.messageBuy(differencePosNeg, lastClosed);
+      this.messageBuy(lastClosed);
       sleep(SLEEP_BETWEEN_TRANSACTION);
   }
 
@@ -142,7 +136,7 @@ CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingSt
     }
 }
 
-CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastClosed) {
+CryptoWatcher.prototype.messageBuy = function messageBuy(lastClosed) {
   console.log('');
   console.log('');
   console.log('#################################################################################');
@@ -153,7 +147,6 @@ CryptoWatcher.prototype.messageBuy = function messageBuy(differencePosNeg, lastC
     this.slidingWindow.getTime(), '@', lastClosed, '<<<<<');
   console.log('[Prog : ]', math.round(this.slidingWindow.percentageProgressionOnWindow), '%');
   console.log('[Max Amplitude : ]', math.round(this.slidingWindow.maxAmplitudeOnWindow), '%');
-  console.log('[Diff pos neg : ]', math.round(differencePosNeg));
   console.log('[previousPositivesOrZero ]', this.slidingWindow.previousPositivesOrZero);
   console.log('[numberPositiveSecondHalf]', this.slidingWindow.numberPositiveSecondHalf);
   console.log('[Neg last 5]', this.slidingWindow.numberNegativeLastFive);
