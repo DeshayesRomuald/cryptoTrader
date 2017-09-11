@@ -123,7 +123,7 @@ rl.question('Which testset to launch ?', (res) => {
                     cryptoWatcherxmr8.add(cryptoOhlc10);
                     break;
                 case '11':
-                    const cryptoOhlc11 = cryptoOHLCFactory.create(eth8C[y]); // POS 4.03% / POS 4.27
+                    const cryptoOhlc11 = cryptoOHLCFactory.create(eth8C[y]); // 0
                     cryptoWatchereth8.add(cryptoOhlc11);
                     break;
             }
