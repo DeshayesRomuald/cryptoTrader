@@ -8,8 +8,6 @@ const { notify } = require('../utils/notifier');
 const cryptoOHLCFactory = require('../factories/cryptoOHLCFactory');
 const slidingWindowFactory = require('../factories/slidingWindowFactory');
 
-const SLEEP_BETWEEN_TRANSACTION = 0;
-const SLEEP_BETWEEN_DATA = 0;
 const FEES = 0.26;
 
 const CryptoWatcher = function CryptoWatcher() {
@@ -26,21 +24,18 @@ const CryptoWatcher = function CryptoWatcher() {
 
   // at first trailing stop is set to high value, to try to rebound
   this.initTrailingStop = 10;
-  this.smallerTrailingStop = 1;
+  this.smallerTrailingStop = 1.2;
   this.trailingStopMultiplier = this.initTrailingStop; // 0.5
-  this.minPositiveOnWindow = 12; // 12
-  this.minProgressionOnWindow = 1.1; // 1.1
+  this.minPositiveOnWindow = 13; // 12
+  this.minProgressionOnWindow = 0.5; // 1.1
   this.minPositiveSecHalf = 4; // 4
-  this.maxNegativeLastFive = 0; // 1
+  this.maxNegativeLastFive = 1; // 1
   this.diffMeanLowestMultiplicator = 100; // 2
 };
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
   this.decide();
-
-  sleep(SLEEP_BETWEEN_DATA);
-
 }
 
 /**
@@ -69,9 +64,9 @@ CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingS
 CryptoWatcher.prototype.decide = function decide() {
   const lastClosed = this.slidingWindow.getLast().close;
   // BUY CRETIERIA
-  if (this.slidingWindow.previousPositivesOrZero > this.minPositiveOnWindow &&
-    this.slidingWindow.percentageProgressionOnWindow > this.minProgressionOnWindow &&
-    this.slidingWindow.numberPositiveSecondHalf > this.minPositiveSecHalf &&
+  if (this.slidingWindow.previousPositivesOrZero >= this.minPositiveOnWindow &&
+    this.slidingWindow.percentageProgressionOnWindow >= this.minProgressionOnWindow &&
+    this.slidingWindow.numberPositiveSecondHalf >= this.minPositiveSecHalf &&
     this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
     this.slidingWindow.differenceMeanLowest * this.diffMeanLowestMultiplicator > this.slidingWindow.percentageProgressionOnWindow &&
     !this.bought) {
@@ -84,7 +79,6 @@ CryptoWatcher.prototype.decide = function decide() {
       this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
 
       this.messageBuy(lastClosed);
-      sleep(SLEEP_BETWEEN_TRANSACTION);
   }
 
   // if it still raises, set the new minimum to the new progress
@@ -117,7 +111,6 @@ CryptoWatcher.prototype.decide = function decide() {
 
     // we should sell with a limit order to avoid big holes
     this.messageSell(beneficePercent, lastClosed);
-    sleep(SLEEP_BETWEEN_TRANSACTION);
 
     this.bought = false;
     this.trailingStopMultiplier = this.initTrailingStop;
@@ -134,6 +127,10 @@ CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingSt
       console.log('SET Small Trailing Stop');
       this.trailingStopPercent = this.smallerTrailingStop;
     }
+}
+
+CryptoWatcher.prototype.getTotalSell = function getTotalSell(lastClosed) {
+  return this.totalSell;
 }
 
 CryptoWatcher.prototype.messageBuy = function messageBuy(lastClosed) {
