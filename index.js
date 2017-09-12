@@ -3,15 +3,19 @@ const sleep = require('system-sleep');
 const { setUseNotification } = require('./utils/notifier');
 const cryptoWatcherFactory = require('./factories/cryptoWatcherFactory');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
+const cryptoWalletFactory = require('./factories/cryptoWalletFactory');
+const cryptoCurrencyFactory = require('./factories/cryptoCurrencyFactory');
 
 const { getOHLC, getTimeServer } = require('./cryptoParser');
 
-const cryptoWatcherLTC = cryptoWatcherFactory.create('LiteCoin');
-const cryptoWatcherBTC = cryptoWatcherFactory.create('Bitcoin');
-const cryptoWatcherETH = cryptoWatcherFactory.create('Ethereum');
-const cryptoWatcherXMR = cryptoWatcherFactory.create('Monero');
-const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin Cash');
-const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple');
+const wallet = cryptoWalletFactory.create();
+
+const cryptoWatcherLTC = cryptoWatcherFactory.create('LiteCoin', wallet);
+const cryptoWatcherBTC = cryptoWatcherFactory.create('Bitcoin', wallet);
+const cryptoWatcherETH = cryptoWatcherFactory.create('Ethereum', wallet);
+const cryptoWatcherXMR = cryptoWatcherFactory.create('Monero', wallet);
+const cryptoWatcherBCH = cryptoWatcherFactory.create('Bitcoin Cash', wallet);
+const cryptoWatcherXRP = cryptoWatcherFactory.create('Ripple', wallet);
 
 cryptoWatcherLTC.slidingWindow.toStringMethod = 'light';
 cryptoWatcherBTC.slidingWindow.toStringMethod = 'light';
@@ -19,6 +23,14 @@ cryptoWatcherETH.slidingWindow.toStringMethod = 'light';
 cryptoWatcherXMR.slidingWindow.toStringMethod = 'light';
 cryptoWatcherBCH.slidingWindow.toStringMethod = 'light';
 cryptoWatcherXRP.slidingWindow.toStringMethod = 'light';
+
+wallet.addFiat(1000);
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherLTC.slidingWindow.cryptoName))
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherBTC.slidingWindow.cryptoName))
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherETH.slidingWindow.cryptoName))
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherXMR.slidingWindow.cryptoName))
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherBCH.slidingWindow.cryptoName))
+wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(cryptoWatcherXRP.slidingWindow.cryptoName))
 
 setUseNotification(true);
 
