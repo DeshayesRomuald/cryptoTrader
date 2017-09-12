@@ -1,9 +1,13 @@
 const math = require('../utils/math');
 const { notify } = require('../utils/notifier');
+const cryptoOHLCFactory = require('../factories/cryptoOHLCFactory');
+const slidingWindowFactory = require('../factories/slidingWindowFactory');
+const cryptoCurrencyFactory = require('../factories/cryptoCurrencyFactory');
 
 const FEES = 0.26;
 
-const CryptoWatcher = function CryptoWatcher() {
+const CryptoWatcher = function CryptoWatcher(wallet) {
+  this.cryptoWallet = wallet;
   this.slidingWindow = null;
   this.bought = false;
   this.previousProgression = 0;
@@ -28,6 +32,16 @@ const CryptoWatcher = function CryptoWatcher() {
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
+  
+  // update the value of the wallet when a new cryptoValue is received
+  const cryptoCurency = cryptoCurrencyFactory.create({
+    name: this.slidingWindow.cryptoName,
+    value: cryptoOhlc.close,
+    amountPossessed: 0,
+    valueInEur: 0,
+  });
+  this.cryptoWallet.update(cryptoCurency);
+  
   this.decide();
 };
 
@@ -87,7 +101,7 @@ CryptoWatcher.prototype.decide = function decide() {
     // goes down 0.5% then goes up 0.1% the next iteration.
     if (newLimitToSell > this.limitToSell) {
       this.limitToSell = newLimitToSell;
-      console.log('new MIN ', math.round(this.limitToSell, 4));
+      console.log(`new MIN [${this.slidingWindow.cryptoName}] : ${math.round(this.limitToSell, 4)}`);
     }
   }
 
