@@ -20,22 +20,30 @@ const math = require('./utils/math');
 const { notify, setUseNotification } = require('./utils/notifier');
 const cryptoWatcherFactory = require('./factories/cryptoWatcherFactory');
 const cryptoOHLCFactory = require('./factories/cryptoOHLCFactory');
-
+const cryptoWalletFactory = require('./factories/cryptoWalletFactory');
+const cryptoCurrencyFactory = require('./factories/cryptoCurrencyFactory');
 const { getOHLC, getTimeServer } = require('./cryptoParser');
 
+const wallet = cryptoWalletFactory.create();
+
 const cryptoWatchers = [
-    cryptoWatcherFactory.create('Bitcoin cash'),
-    cryptoWatcherFactory.create('Bitcoin cash 6'),
-    cryptoWatcherFactory.create('Ethereum'),
-    cryptoWatcherFactory.create('Litecoin'),
-    cryptoWatcherFactory.create('LTC 6'),
-    cryptoWatcherFactory.create('LTC 15m'),
-    cryptoWatcherFactory.create('ETH5m'),
-    cryptoWatcherFactory.create('XMR7'),
-    cryptoWatcherFactory.create('XMR5m'),
-    cryptoWatcherFactory.create('xmr8'),
-    cryptoWatcherFactory.create('eth8'),
+    cryptoWatcherFactory.create('Bitcoin cash', wallet),
+    cryptoWatcherFactory.create('Bitcoin cash 6', wallet),
+    cryptoWatcherFactory.create('Ethereum', wallet),
+    cryptoWatcherFactory.create('Litecoin', wallet),
+    cryptoWatcherFactory.create('LTC 6', wallet),
+    cryptoWatcherFactory.create('LTC 15m', wallet),
+    cryptoWatcherFactory.create('ETH5m', wallet),
+    cryptoWatcherFactory.create('XMR7', wallet),
+    cryptoWatcherFactory.create('XMR5m', wallet),
+    cryptoWatcherFactory.create('xmr8', wallet),
+    cryptoWatcherFactory.create('eth8', wallet),
 ];
+
+wallet.addFiat(1000);
+cryptoWatchers.forEach(watcher => {
+    wallet.addCryptoCurrency(cryptoCurrencyFactory.createEmpty(watcher.slidingWindow.cryptoName))
+})
 
 const jsonFiles = [
     clone(bchOhlc),
@@ -61,6 +69,7 @@ const rl = readline.createInterface({
 });
 
 let answer = null;
+
 
 // while (answer !== 'exit') {
 rl.question('Which testset to launch ?', (res) => {
@@ -137,6 +146,8 @@ rl.question('Which testset to launch ?', (res) => {
         console.log(`WATCHER `, totalSelli);
     }
     console.log('TOTAL = ', total);
+    console.log(`Wallet balance ${wallet.getWalletValue()}`);
+    
 
 })
 
