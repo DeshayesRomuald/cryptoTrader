@@ -32,18 +32,18 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   // crypto name
   this.cryptoName = cryptoName;
   // how many positive candles in second half of window
-  this.numberPositiveSecondHalf;
+  // this.numberPositiveSecondHalf;
   // number of negative in the last five should not be bigger than 2
-  this.numberNegativeLastFive;
+  // this.numberNegativeLastFive;
   // get time of last inserted cryptoOHLC
-  this.timeLastOHLC;
+  // this.timeLastOHLC;
   // difference between mean value and lowest value
-  this.differenceMeanLowest;
+  // this.differenceMeanLowest;
 
-  this.authorizedDiffPosNeg;
-  this.minProgressionOnWindow;
-  this.minPositiveSecHalf;
-  this.maxNegativeLastFive;
+  // this.authorizedDiffPosNeg;
+  // this.minProgressionOnWindow;
+  // this.minPositiveSecHalf;
+  // this.maxNegativeLastFive;
 
   this.toStringMethod = 'none';
 };
