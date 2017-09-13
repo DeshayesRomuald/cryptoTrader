@@ -1,5 +1,5 @@
-var sleep = require('system-sleep');
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const sleep = require('system-sleep');
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 const clone = require('clone');
 const path = require('path');
 
@@ -36,7 +36,7 @@ const CryptoWatcher = function CryptoWatcher() {
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
   this.decide();
-}
+};
 
 /**
  * could be recalculated every iteration, such that when rate is above bought value, trailing stop gets tighter
@@ -55,8 +55,7 @@ CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingS
   // generally 2 iterations going down before selling
   this.trailingStopPercent = 1 * this.trailingStopMultiplier;
   return this.trailingStopPercent;
-}
-
+};
 
 
 // implement a trailing stop
@@ -71,21 +70,20 @@ CryptoWatcher.prototype.decide = function decide() {
     this.slidingWindow.differenceMeanLowest * this.diffMeanLowestMultiplicator > this.slidingWindow.percentageProgressionOnWindow &&
     !this.bought) {
       // trailing stop width should be based on std dev at buy, not reevaluated every iterarion
-      this.estimateTrailingStopPercent();
+    this.estimateTrailingStopPercent();
 
-      this.buyValue = lastClosed;
-      this.bought = true;
-      this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
-      this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+    this.buyValue = lastClosed;
+    this.bought = true;
+    this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
+    this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
 
-      this.messageBuy(lastClosed);
+    this.messageBuy(lastClosed);
   }
 
   // if it still raises, set the new minimum to the new progress
   // RAISE TRAILING STOP
   else if (this.bought && lastClosed >= this.previousValue) {
-
-    //if lastClosed has grown more than 1.26% since buyValue, set trailing stop to small amount
+    // if lastClosed has grown more than 1.26% since buyValue, set trailing stop to small amount
     // before that, big trailing stop let's say 25%
     this.tryToReduceTrailingStop(lastClosed);
 
@@ -103,7 +101,6 @@ CryptoWatcher.prototype.decide = function decide() {
 
   // SELL CRITERIA
   else if (this.bought && lastClosed < this.limitToSell) {
-
     const beneficeAbsolute = lastClosed - this.buyValue;
     const beneficePercent = beneficeAbsolute / this.buyValue * 100 - FEES;
     this.totalSell += beneficePercent;
@@ -117,21 +114,21 @@ CryptoWatcher.prototype.decide = function decide() {
   }
 
   this.previousValue = lastClosed;
-}
+};
 
 CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingStop(lastClosed) {
   if (
     lastClosed / this.buyValue > (1 + this.smallerTrailingStop / 100) &&
     this.trailingStopPercent === this.initTrailingStop
   ) {
-      console.log('SET Small Trailing Stop');
-      this.trailingStopPercent = this.smallerTrailingStop;
-    }
-}
+    console.log('SET Small Trailing Stop');
+    this.trailingStopPercent = this.smallerTrailingStop;
+  }
+};
 
 CryptoWatcher.prototype.getTotalSell = function getTotalSell(lastClosed) {
   return this.totalSell;
-}
+};
 
 CryptoWatcher.prototype.messageBuy = function messageBuy(lastClosed) {
   console.log('');
@@ -154,10 +151,9 @@ CryptoWatcher.prototype.messageBuy = function messageBuy(lastClosed) {
   console.log('#################################################################################');
 
 
-
   notify(`You should BUY some ${this.slidingWindow.cryptoName}`,
     `Its value is ${lastClosed}`);
-}
+};
 
 CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
   console.log('#########                                                                       #');
@@ -177,6 +173,6 @@ CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, last
 
   notify(`It's time to sell your ${this.slidingWindow.cryptoName}`,
     `Its Value is ${lastClosed}, \nyou made ${math.round(beneficePercent)}% benefice`);
-}
+};
 
 module.exports = CryptoWatcher;
