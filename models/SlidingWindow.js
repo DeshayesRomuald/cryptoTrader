@@ -113,19 +113,18 @@ SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(crypt
 SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
   this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues * 100;
 };
-// **********************************************************************************
 
-
-/** *********************************************************************************
- *  hasAlreadyBeenAdded
- *
- ** ******************************************************************************** */
+/**
+ * Get time of last OHLC
+ */
 SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC() {
   this.timeLastOHLC = this.cryptoValues[this.cryptoValues.length - 1].time;
   return this.timeLastOHLC;
 };
-// **********************************************************************************
 
+/**
+ * To String function
+ */
 SlidingWindow.prototype.toString = function toString() {
   if (this.toStringMethod === 'full') {
     console.log('');
@@ -133,21 +132,19 @@ SlidingWindow.prototype.toString = function toString() {
   if (this.toStringMethod === 'full' || this.toStringMethod === 'light') {
     console.log('######### Sliding Window',
       this.cryptoName,
-      ' @', this.getTime(),
-      '[Mean :', math.round(this.meanCryptoValues, 4), ']');
+      ` @ ${this.getTime()} `,
+      `[Mean : ${math.round(this.meanCryptoValues, 4)} ]`
+    );
   }
   if (this.toStringMethod === 'full') {
     console.log('------');
     this.cryptoValues.forEach((elem, index) => {
-      console.log('#',
-        index,
-        '[Open :',
-        elem.open,
-        '] [Close :',
-        elem.close,
-        '] [Candle Size :',
-        math.round(elem.closeMinusOpen, 5),
-        ']');
+      console.log(
+        `# ${index} `,
+        `[Open : ${elem.open} ] `,
+        `[Close : ${elem.close} ] `,
+        `[Candle Size : ${math.round(elem.closeMinusOpen, 5)} ]`
+      );
     });
     console.log('------');
     console.log('Difference pos/neg :', this.previousPositivesOrZero - this.previousNegatives, ` → > ${this.authorizedDiffPosNeg}`);
@@ -163,39 +160,35 @@ SlidingWindow.prototype.toString = function toString() {
 };
 
 
-/** *********************************************************************************
- *  Helper;
- *
- ** ******************************************************************************** */
-const calculateMeanValue = function calculateMeanValue(slidingWindow) {
-  // if (slidingWindow.cryptoValues.length === 1) {
-  //   return slidingWindow.cryptoValues[0].close;
-  // }
+/**
+ * Calculate mean value of a sliding
+ * @param {SlidingWindow} slidingWindow
+ * @returns
+ */
+function calculateMeanValue(slidingWindow) {
   return slidingWindow.cryptoValues.reduce((acc, cur) => acc + (cur.close / slidingWindow.cryptoValues.length), 0);
-};
-// **********************************************************************************
+}
 
-
-/** *********************************************************************************
- *  calculate progression in % between first and last close value
- *
- ** ******************************************************************************** */
-const calculatePercentageProgressionOnWindow = function calculatePercentageProgressionOnWindow(slidingWindow) {
+/**
+ * Calculate progression in % between first and last close value
+ * @param {SlidingWindow} slidingWindow
+ * @returns
+ */
+function calculatePercentageProgressionOnWindow(slidingWindow) {
   const meanFirst = Math.abs(slidingWindow.cryptoValues[0].close + slidingWindow.cryptoValues[0].open) / 2;
   const meanLast = Math.abs(slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close + slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close) / 2;
-  return (meanLast - meanFirst) / meanFirst * 100;
-};
-// **********************************************************************************
+  return ((meanLast - meanFirst) / meanFirst) * 100;
+}
 
 
-/** *********************************************************************************
- *  Helper;
- *
- ** ******************************************************************************** */
-const calculateMinValueOnWindow = function calculateMinValueOnWindow(slidingWindow) {
+/**
+ * Calculate minimum value on sliding window
+ * @param {SlidingWindow} slidingWindow
+ * @returns
+ */
+function calculateMinValueOnWindow(slidingWindow) {
   return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].low);
-};
-// **********************************************************************************
+}
 
 
 /** *********************************************************************************
