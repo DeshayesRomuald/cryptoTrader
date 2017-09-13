@@ -96,7 +96,7 @@ CryptoWatcher.prototype.decide = function decide() {
     const beneficeAbsolute = lastClosed - this.buyValue;
     const beneficePercent = ((beneficeAbsolute / this.buyValue) * 100) - FEES;
     this.totalSell += beneficePercent;
-    this.transactionsCompleted++;
+    this.transactionsCompleted += 1;
 
     // we should sell with a limit order to avoid big holes
     this.messageSell(beneficePercent, lastClosed);
