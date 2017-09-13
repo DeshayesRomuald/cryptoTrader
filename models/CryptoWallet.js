@@ -21,7 +21,7 @@ const CryptoWallet = function CryptoWallet() {
  * if currency was not added
  */
 function addCryptoCurrency(currency) {
-  if (alreadyThere(currency)) {
+  if (this.alreadyThere(currency)) {
     return null;
   }
   // look if there is already some existing amount in added currency,
@@ -48,7 +48,7 @@ CryptoWallet.prototype.addCryptoCurrency = addCryptoCurrency;
 function alreadyThere(currency) {
   return this.cryptoCurrencies.find(elem => elem.name === currency.name) !== undefined;
 }
-SlidingWindow.prototype.alreadyThere = alreadyThere;
+CryptoWallet.prototype.alreadyThere = alreadyThere;
 
 
 
@@ -62,7 +62,7 @@ SlidingWindow.prototype.alreadyThere = alreadyThere;
 function get(currency) {
   return this.cryptoCurrencies.find(elem => elem.name === currency.name);
 }
-SlidingWindow.prototype.get = get;
+CryptoWallet.prototype.get = get;
 
 
 
@@ -104,7 +104,7 @@ CryptoWallet.prototype.withdrawFiat = withdrawFiat;
  * @throws {Exception} can not exchange more fiat than possessed 
  */
 function buyCrypto(cryptoCurrency) {
-  const crypto = get(cryptoCurrency);
+  const crypto = this.get(cryptoCurrency);
   //order is important, first sell, then buy
   this.withdrawFiat(cryptoCurrency.valueInEur)
   crypto.buy(cryptoCurrency.amount, cryptoCurrency.value);
@@ -121,7 +121,7 @@ CryptoWallet.prototype.buyCrypto = buyCrypto;
  * @throws {Exception} can not sell more crypto than possessed
  */
 function sellCrypto(cryptoCurrency) {
-  const crypto = get(cryptoCurrency);
+  const crypto = this.get(cryptoCurrency);
   //order is important, first sell, then buy
   crypto.sell(cryptoCurrency.amount, cryptoCurrency.value); 
   this.addFiat(cryptoCurrency.valueInEur)
@@ -136,7 +136,7 @@ CryptoWallet.prototype.sellCrypto = sellCrypto;
  */
 function update(cryptoCurrency) {
   // the amount possessed with old rate
-  const currentCryptoInWallet = get(cryptoCurrency);
+  const currentCryptoInWallet = this.get(cryptoCurrency);
   const oldCryptoInWalletValue = currentCryptoInWallet.valueInEur;
   currentCryptoInWallet.changeRate(cryptoCurrency.value);
 
@@ -144,5 +144,21 @@ function update(cryptoCurrency) {
   this.valueInEur += difference;
 }
 CryptoWallet.prototype.update = update;
+
+/**
+ * 
+ * @return {number} the total current value of the wallet
+ */
+function getWalletValue() {
+  this.cryptoCurrencies.reduce((acc, cur) => {
+    console.log('acc',acc);
+    console.log('value',cur.valueInEur);
+    console.log('name',cur.name);
+    console.log('');
+    return acc + cur.valueInEur
+  }, this.balanceInEur);
+}
+CryptoWallet.prototype.getWalletValue = getWalletValue;
+
 
 module.exports = CryptoWallet;
