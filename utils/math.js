@@ -1,42 +1,20 @@
+const _ = require('lodash');
+
 function round(number, precision = 2) {
-    var pair = (number + 'e').split('e')
-    var value = Math.round(pair[0] + 'e' + (+pair[1] + precision))
-    pair = (value + 'e').split('e')
-    return +(pair[0] + 'e' + (+pair[1] - precision))
+  return _.round(Number(number), precision);
 }
 
 /**
- *
- * @param {*} ohlc
- *
  * use the close value located a elem[4]
- *
- * @param {any} ohlc
+ * @param {object} ohlc
  * @returns
  */
 function getMin(ohlc) {
-    let min = 1e10;
-    let minElem = [];
-    ohlc.forEach(elem => {
-        if (elem.close < min) {
-            min = elem.close;
-            minElem = elem;
-        }
-    });
-    return minElem;
+  return _.minBy(ohlc, x => x.close);
 }
 
 function getMax(ohlc) {
-    let max = 0;
-    let maxElem = [];
-    ohlc.forEach(elem => {
-        if (elem.close > max) {
-            max = elem.close;
-            maxElem = elem;
-
-        }
-    });
-    return maxElem;
+  return _.maxBy(ohlc, x => x.close);
 }
 
 module.exports = {
