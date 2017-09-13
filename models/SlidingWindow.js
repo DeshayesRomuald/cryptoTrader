@@ -66,17 +66,17 @@ function addCryptoOHLC(cryptoOhlc) {
     const oldestOHLC = this.cryptoValues.shift();
 
     if (oldestOHLC && oldestOHLC.closeMinusOpen >= 0) {
-      this.previousPositivesOrZero--;
+      this.previousPositivesOrZero -= 1;
     } else {
-      this.previousNegatives--;
+      this.previousNegatives -= 1;
     }
   }
 
   // update positive and negative count on window
   if (cryptoOhlc.closeMinusOpen >= 0) {
-    this.previousPositivesOrZero++;
+    this.previousPositivesOrZero += 1;
   } else {
-    this.previousNegatives++;
+    this.previousNegatives += 1;
   }
 
   // calculate various fields
@@ -295,7 +295,7 @@ const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecond
   let numberPositive = 0;
   for (let y = windowLength - 1; y >= windowLength / 2; y--) {
     if (values[y].closeMinusOpen > 0) {
-      numberPositive++;
+      numberPositive += 1;
     }
   }
   return numberPositive;
@@ -314,9 +314,9 @@ const calculateNumberNegativeLastFive = function calculateNumberNegativeLastFive
   let count = 0;
 
   for (let y = windowLength - 1; y >= 0; y--) {
-    count++;
+    count += 1;
     if (values[y].closeMinusOpen < 0) {
-      numberNegative++;
+      numberNegative += 1;
     }
     if (count > 4) { // exit the loop in a dirty way
       y = -1;
