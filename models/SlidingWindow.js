@@ -1,68 +1,48 @@
 const math = require('../utils/math');
 
-
-// we will keep a sliding window of size SIZE. This is the size of the array
 const SIZE = 20;
 
-/** *********************************************************************************
- *  Helper;
- *
- ** ******************************************************************************** */
-const SlidingWindow = function SlidingWindow(cryptoName) {
-  // array of SIZE last CryptoOHLC values
-  this.cryptoValues = [];
-  // number of previous positive bars in the array
-  this.previousPositivesOrZero = 0;
-  // number of previous negative bars in the array
-  this.previousNegatives = 0;
+/**
+ * Sliding window model
+ * @param {string} cryptoName
+ */
+function SlidingWindow(cryptoName) {
+  this.cryptoValues = []; // array of SIZE last CryptoOHLC values
+  this.previousPositivesOrZero = 0; // number of previous positive bars in the cryptoValues
+  this.previousNegatives = 0; // number of previous negative bars in the cryptoValues
   // mean trend of cryptoOHlC on the sliding window. Instance of CryptoOHLC containing mean values
   this.meanCryptoValues = 0;
-  // progression, in percent, of the crypto value since first value in the window
-  this.percentageProgressionOnWindow = 0;
-  // min value on window
+  this.percentageProgressionOnWindow = 0; // progression(%) of the crypto value since first value in the window
   this.minValueOnWindow = 0;
-  // max value on window
   this.maxValueOnWindow = 0;
-  // max amplitude in % present in window to quickly detect big changes
-  this.maxAmplitudeOnWindow = 0;
-  // mean candle size in percent
+  this.maxAmplitudeOnWindow = 0; // in %, for quick changes detection
   this.meanCandleSizeInPercent = 0;
-  // standard deviation around mean candle size
-  this.stdDevCandleSizePercent = 0;
-  // crypto name
+  this.stdDevCandleSizePercent = 0; // standard deviation around mean candle size
   this.cryptoName = cryptoName;
-  // how many positive candles in second half of window
-  // this.numberPositiveSecondHalf;
-  // number of negative in the last five should not be bigger than 2
-  // this.numberNegativeLastFive;
-  // get time of last inserted cryptoOHLC
-  // this.timeLastOHLC;
-  // difference between mean value and lowest value
+  // this.numberPositiveSecondHalf; // how many positive candles in second half of window
+  // this.numberNegativeLastFive; // number of negative in the last five
+  // this.timeLastOHLC; // get time of last inserted cryptoOHLC
   // this.differenceMeanLowest;
-
   // this.authorizedDiffPosNeg;
   // this.minProgressionOnWindow;
   // this.minPositiveSecHalf;
   // this.maxNegativeLastFive;
 
   this.toStringMethod = 'none';
-};
-// **********************************************************************************
+}
 
-
-/** *********************************************************************************
- *  Helper;
- * @param {any} cryptoOhlc
- * @returns
- ** ******************************************************************************** */
-function addCryptoOHLC(cryptoOhlc) {
-  // first check if this element has not already been added
+/**
+ * Add a cryptoOHLC into the sliding window
+ * @param {object} cryptoOhlc
+ * @returns the new cryptoOHLC pushed or null if already inside the sliding window
+ */
+SlidingWindow.prototype.addCryptoOHLC = function addCryptoOHLC(cryptoOhlc) {
   if (this.hasAlreadyBeenAdded(cryptoOhlc)) {
     return null;
   }
 
   // removing first element if max window size is reached
-  if (this.cryptoValues.length == SIZE) {
+  if (this.cryptoValues.length === SIZE) {
     const oldestOHLC = this.cryptoValues.shift();
 
     if (oldestOHLC && oldestOHLC.closeMinusOpen >= 0) {
@@ -96,51 +76,40 @@ function addCryptoOHLC(cryptoOhlc) {
   this.toString();
 
   return cryptoOhlc;
-}
-SlidingWindow.prototype.addCryptoOHLC = addCryptoOHLC;
-// **********************************************************************************
+};
 
-
-/** *********************************************************************************
- *  @returns the time of the last ohlc in the sliding window
- *
- ** ******************************************************************************** */
+/**
+ * Get the time of the last OHLC in the sliding window
+ * @returns
+ */
 SlidingWindow.prototype.getTime = function getTime() {
   if (this.cryptoValues.length === 0) {
     return null;
   }
   return this.getLast().date;
 };
-// **********************************************************************************
 
-
-/** *********************************************************************************
- *  @returns the last ohlc in the sliding window
- *
- ** ******************************************************************************** */
+/**
+ * Get the last OHLC in the sliding window
+ * @returns
+ */
 SlidingWindow.prototype.getLast = function getLast() {
   if (this.cryptoValues.length === 0) {
     return null;
   }
   return this.cryptoValues[this.cryptoValues.length - 1];
 };
-// **********************************************************************************
 
-
-/** *********************************************************************************
- *  hasAlreadyBeenAdded
- *
- ** ******************************************************************************** */
+/**
+ * Check if a cryptoOHLC is already inside the sliding window
+ */
 SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(cryptoOhlc) {
   return this.cryptoValues.find(elem => elem.time === cryptoOhlc.time) !== undefined;
 };
-// **********************************************************************************
 
-
-/** *********************************************************************************
- *  hasAlreadyBeenAdded
- *
- ** ******************************************************************************** */
+/**
+ * Calculate the difference between mean and lowest and set the differenceMeanLowest
+ */
 SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
   this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues * 100;
 };
