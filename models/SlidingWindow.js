@@ -1,4 +1,4 @@
-const math = require('../utils/math');
+const _ = require('lodash');
 
 const SIZE = 20;
 
@@ -111,7 +111,7 @@ SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(crypt
  * Calculate the difference between mean and lowest and set the differenceMeanLowest
  */
 SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
-  this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues * 100;
+  this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / (this.meanCryptoValues * 100);
 };
 
 /**
@@ -133,7 +133,7 @@ SlidingWindow.prototype.toString = function toString() {
     console.log('######### Sliding Window',
       this.cryptoName,
       ` @ ${this.getTime()} `,
-      `[Mean : ${math.round(this.meanCryptoValues, 4)} ]`
+      `[Mean : ${_.round(this.meanCryptoValues, 4)} ]`
     );
   }
   if (this.toStringMethod === 'full') {
@@ -143,12 +143,12 @@ SlidingWindow.prototype.toString = function toString() {
         `# ${index} `,
         `[Open : ${elem.open} ] `,
         `[Close : ${elem.close} ] `,
-        `[Candle Size : ${math.round(elem.closeMinusOpen, 5)} ]`
+        `[Candle Size : ${_.round(elem.closeMinusOpen, 5)} ]`
       );
     });
     console.log('------');
     console.log('Difference pos/neg :', this.previousPositivesOrZero - this.previousNegatives, ` → > ${this.authorizedDiffPosNeg}`);
-    console.log('prog Window :', math.round(this.percentageProgressionOnWindow),
+    console.log('prog Window :', _.round(this.percentageProgressionOnWindow),
       `% → > ${this.minProgressionOnWindow}%`);
     console.log('pos2eH :', this.numberPositiveSecondHalf,
       `→ > ${this.minPositiveSecHalf}`);
@@ -172,7 +172,7 @@ function calculateMeanValue(slidingWindow) {
 /**
  * Calculate progression in % between first and last close value
  * @param {SlidingWindow} slidingWindow
- * @returns
+ * @returns {Number}
  */
 function calculatePercentageProgressionOnWindow(slidingWindow) {
   const meanFirst = Math.abs(slidingWindow.cryptoValues[0].close + slidingWindow.cryptoValues[0].open) / 2;
@@ -184,10 +184,10 @@ function calculatePercentageProgressionOnWindow(slidingWindow) {
 /**
  * Calculate minimum value on sliding window
  * @param {SlidingWindow} slidingWindow
- * @returns
+ * @returns {Number}
  */
 function calculateMinValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].low);
+  return _.minBy(slidingWindow.cryptoValues, 'low');
 }
 
 
@@ -196,39 +196,36 @@ function calculateMinValueOnWindow(slidingWindow) {
  *
  ** ******************************************************************************** */
 const calculateMaxValueOnWindow = function calculateMaxValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.max(acc, cur.high), slidingWindow.cryptoValues[0].high);
+  return _.maxBy(slidingWindow.cryptoValues, 'high');
 };
-// **********************************************************************************
 
 
 /** *********************************************************************************
  *  Helper;
  *
  ** ******************************************************************************** */
-const calculateMaxAmplitudeOnWindow = function calculateMaxAmplitudeOnWindow(slidingWindow) {
-  return (slidingWindow.maxValueOnWindow - slidingWindow.minValueOnWindow) / slidingWindow.minValueOnWindow * 100;
-};
-// **********************************************************************************
+function calculateMaxAmplitudeOnWindow(slidingWindow) {
+  return (slidingWindow.maxValueOnWindow - slidingWindow.minValueOnWindow) / (slidingWindow.minValueOnWindow * 100);
+}
 
 
 /** *********************************************************************************
  *  Helper;
  *
  ** ******************************************************************************** */
-const calculateMeanCandleSizeAbsolute = function calculateMeanCandleSizeAbsolute(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => acc + (Math.abs(cur.closeMinusOpen) / slidingWindow.cryptoValues.length), 0);
-};
-// **********************************************************************************
+function calculateMeanCandleSizeAbsolute(slidingWindow) {
+  return _.meanBy(slidingWindow.cryptoValues, 'closeMinusOpen');
+}
 
 
 /** *********************************************************************************
  *  Helper;
  *
  ** ******************************************************************************** */
-const calculateMeanCandleSizePercent = function calculateMeanCandleSizePercent(slidingWindow) {
+function calculateMeanCandleSizePercent(slidingWindow) {
   const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
-  return meanSizeAbs / slidingWindow.meanCryptoValues * 100;
-};
+  return (meanSizeAbs / slidingWindow.meanCryptoValues) * 100;
+}
 // **********************************************************************************
 
 
@@ -236,14 +233,14 @@ const calculateMeanCandleSizePercent = function calculateMeanCandleSizePercent(s
  *  Helper;
  *
  ** ******************************************************************************** */
-const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePercent(slidingWindow) {
+function calculateStdDevCandleSizePercent(slidingWindow) {
   const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
-  const squaredDiffs = slidingWindow.cryptoValues.map(cryptoValue =>
-    Math.pow((cryptoValue.closeMinusOpen - meanSizeAbs), 2));
-  const variance = squaredDiffs.reduce((acc, cur) => acc + cur / slidingWindow.cryptoValues.length);
+  const squaredDiffs = slidingWindow.cryptoValues
+    .map(cryptoValue => (cryptoValue.closeMinusOpen - meanSizeAbs) ** 2);
+  const variance = squaredDiffs.reduce((acc, cur) => acc + (cur / slidingWindow.cryptoValues.length));
   const stdDevAbs = Math.sqrt(variance);
-  return stdDevAbs / slidingWindow.meanCryptoValues * 100;
-};
+  return (stdDevAbs / slidingWindow.meanCryptoValues) * 100;
+}
 // **********************************************************************************
 
 
@@ -251,7 +248,7 @@ const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePerce
  *  count values that are strictly positive in second half of window
  *
  ** ******************************************************************************** */
-const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecondHalf(slidingWindow) {
+function calculateNumberPositiveSecondHalf(slidingWindow) {
   const windowLength = slidingWindow.cryptoValues.length;
   const values = slidingWindow.cryptoValues;
   let numberPositive = 0;
@@ -261,7 +258,7 @@ const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecond
     }
   }
   return numberPositive;
-};
+}
 // **********************************************************************************
 
 
