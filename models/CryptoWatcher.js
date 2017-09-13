@@ -5,6 +5,7 @@ const slidingWindowFactory = require('../factories/slidingWindowFactory');
 const cryptoCurrencyFactory = require('../factories/cryptoCurrencyFactory');
 
 const FEES = 0.26;
+const AMOUNT_PER_TRANSACTION = 50;
 
 const CryptoWatcher = function CryptoWatcher(wallet) {
   this.cryptoWallet = wallet;
@@ -32,7 +33,7 @@ const CryptoWatcher = function CryptoWatcher(wallet) {
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
-  
+
   // update the value of the wallet when a new cryptoValue is received
   const cryptoCurency = cryptoCurrencyFactory.create({
     name: this.slidingWindow.cryptoName,
@@ -41,7 +42,7 @@ CryptoWatcher.prototype.add = function add(cryptoOhlc) {
     valueInEur: 0,
   });
   this.cryptoWallet.update(cryptoCurency);
-  
+
   this.decide();
 };
 
@@ -75,13 +76,20 @@ CryptoWatcher.prototype.decide = function decide() {
     this.slidingWindow.numberNegativeLastFive <= this.maxNegativeLastFive &&
     this.slidingWindow.differenceMeanLowest * this.diffMeanLowestMultiplicator > this.slidingWindow.percentageProgressionOnWindow &&
     !this.bought) {
-      // trailing stop width should be based on std dev at buy, not reevaluated every iterarion
+    // trailing stop width should be based on std dev at buy, not reevaluated every iterarion
     this.estimateTrailingStopPercent();
 
     this.buyValue = lastClosed;
     this.bought = true;
     this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
-    this.limitToSell = lastClosed - ((this.trailingStopPercent * lastClosed) / 100);
+    this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+
+    this.cryptoWallet.buyCrypto(cryptoCurrencyFactory.create({
+      name: this.slidingWindow.cryptoName,
+      value: lastClosed,
+      amountPossessed: AMOUNT_PER_TRANSACTION / lastClosed,
+      valueInEur: AMOUNT_PER_TRANSACTION,
+    }));
 
     this.messageBuy(lastClosed);
   }
@@ -112,6 +120,16 @@ CryptoWatcher.prototype.decide = function decide() {
     this.totalSell += beneficePercent;
     this.transactionsCompleted += 1;
 
+
+    //I need to sell the amount of crypto bought to cash in the benefice
+    const amountBought = AMOUNT_PER_TRANSACTION / this.buyValue;
+    this.cryptoWallet.sellCrypto(cryptoCurrencyFactory.create({
+      name: this.slidingWindow.cryptoName,
+      value: lastClosed,
+      amountPossessed: amountBought,
+      valueInEur: lastClosed * amountBought,
+    }));
+
     // we should sell with a limit order to avoid big holes
     this.messageSell(beneficePercent, lastClosed);
 
@@ -127,10 +145,22 @@ CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingSt
     lastClosed / this.buyValue > (1 + (this.smallerTrailingStop / 100)) &&
     this.trailingStopPercent === this.initTrailingStop
   ) {
+<<<<<<< HEAD
     console.log('SET Small Trailing Stop');
     this.trailingStopPercent = this.smallerTrailingStop;
   }
 };
+||||||| parent of 7b9f360a... buy and sell use wallet
+      console.log('SET Small Trailing Stop');
+      this.trailingStopPercent = this.smallerTrailingStop;
+    }
+}
+=======
+    console.log('SET Small Trailing Stop');
+    this.trailingStopPercent = this.smallerTrailingStop;
+  }
+}
+>>>>>>> 7b9f360a... buy and sell use wallet
 
 CryptoWatcher.prototype.getTotalSell = function getTotalSell() {
   return this.totalSell;
@@ -162,6 +192,7 @@ CryptoWatcher.prototype.messageBuy = function messageBuy(lastClosed) {
 };
 
 CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, lastClosed) {
+  const amountBought = AMOUNT_PER_TRANSACTION / this.buyValue;
   console.log('#########                                                                       #');
   console.log('#########SELL',
     this.slidingWindow.cryptoName,
@@ -171,6 +202,9 @@ CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, last
   console.log('[Total Sell :] ',
     math.round(this.totalSell),
     `% in ${this.transactionsCompleted} transactions`);
+  console.log(`[AmountBought : ${amountBought}]`);
+  console.log(`[Buy Value : ${this.buyValue}]`);
+  console.log(`[Sell Value : ${lastClosed * amountBought}]`);  
   console.log('#########                                                                       #');
   console.log('#################################################################################');
   console.log('#################################################################################');
