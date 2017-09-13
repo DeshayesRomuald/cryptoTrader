@@ -67,6 +67,8 @@ while (true) {
     const ohlcxrp = getOHLC('XXRPZEUR', 1, time);
     const cryptoOhlcxrp = cryptoOHLCFactory.create(ohlcxrp[ohlcxrp.length - 1]);
     cryptoWatcherXRP.add(cryptoOhlcxrp);
+
+    console.log(`Wallet balance ${wallet.getWalletValue()}`);
   } catch (err) {
     console.log('#########oops ', err);
   }
