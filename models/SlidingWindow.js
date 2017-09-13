@@ -7,7 +7,7 @@ const SIZE = 20;
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const SlidingWindow = function SlidingWindow(cryptoName) {
   // array of SIZE last CryptoOHLC values
   this.cryptoValues = [];
@@ -21,7 +21,7 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.percentageProgressionOnWindow = 0;
   // min value on window
   this.minValueOnWindow = 0;
-  //max value on window
+  // max value on window
   this.maxValueOnWindow = 0;
   // max amplitude in % present in window to quickly detect big changes
   this.maxAmplitudeOnWindow = 0;
@@ -46,18 +46,15 @@ const SlidingWindow = function SlidingWindow(cryptoName) {
   this.maxNegativeLastFive;
 
   this.toStringMethod = 'none';
-
 };
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  * @param {any} cryptoOhlc
  * @returns
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 function addCryptoOHLC(cryptoOhlc) {
   // first check if this element has not already been added
   if (this.hasAlreadyBeenAdded(cryptoOhlc)) {
@@ -94,7 +91,7 @@ function addCryptoOHLC(cryptoOhlc) {
   this.numberPositiveSecondHalf = calculateNumberPositiveSecondHalf(this);
   this.numberNegativeLastFive = calculateNumberNegativeLastFive(this);
   this.calculateTimeLastOHLC();
-  this.calculateDifferenceMeanLowest()
+  this.calculateDifferenceMeanLowest();
 
   this.toString();
 
@@ -104,70 +101,60 @@ SlidingWindow.prototype.addCryptoOHLC = addCryptoOHLC;
 // **********************************************************************************
 
 
-
-
 /** *********************************************************************************
  *  @returns the time of the last ohlc in the sliding window
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 SlidingWindow.prototype.getTime = function getTime() {
   if (this.cryptoValues.length === 0) {
     return null;
   }
   return this.getLast().date;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  @returns the last ohlc in the sliding window
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 SlidingWindow.prototype.getLast = function getLast() {
   if (this.cryptoValues.length === 0) {
     return null;
   }
   return this.cryptoValues[this.cryptoValues.length - 1];
-}
+};
 // **********************************************************************************
-
 
 
 /** *********************************************************************************
  *  hasAlreadyBeenAdded
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(cryptoOhlc) {
   return this.cryptoValues.find(elem => elem.time === cryptoOhlc.time) !== undefined;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  hasAlreadyBeenAdded
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
   this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues * 100;
-}
+};
 // **********************************************************************************
-
-
-
 
 
 /** *********************************************************************************
  *  hasAlreadyBeenAdded
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 SlidingWindow.prototype.calculateTimeLastOHLC = function calculateTimeLastOHLC() {
   this.timeLastOHLC = this.cryptoValues[this.cryptoValues.length - 1].time;
   return this.timeLastOHLC;
-}
+};
 // **********************************************************************************
 
 SlidingWindow.prototype.toString = function toString() {
@@ -178,7 +165,7 @@ SlidingWindow.prototype.toString = function toString() {
     console.log('######### Sliding Window',
       this.cryptoName,
       ' @', this.getTime(),
-      '[Mean :', math.round(this.meanCryptoValues,4), ']');
+      '[Mean :', math.round(this.meanCryptoValues, 4), ']');
   }
   if (this.toStringMethod === 'full') {
     console.log('------');
@@ -204,119 +191,104 @@ SlidingWindow.prototype.toString = function toString() {
     console.log('#########');
     console.log('');
   }
-}
+};
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMeanValue = function calculateMeanValue(slidingWindow) {
   // if (slidingWindow.cryptoValues.length === 1) {
   //   return slidingWindow.cryptoValues[0].close;
   // }
   return slidingWindow.cryptoValues.reduce((acc, cur) => acc + (cur.close / slidingWindow.cryptoValues.length), 0);
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  calculate progression in % between first and last close value
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculatePercentageProgressionOnWindow = function calculatePercentageProgressionOnWindow(slidingWindow) {
   const meanFirst = Math.abs(slidingWindow.cryptoValues[0].close + slidingWindow.cryptoValues[0].open) / 2;
   const meanLast = Math.abs(slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close + slidingWindow.cryptoValues[slidingWindow.cryptoValues.length - 1].close) / 2;
   return (meanLast - meanFirst) / meanFirst * 100;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMinValueOnWindow = function calculateMinValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].low)
-}
+  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.min(acc, cur.low), slidingWindow.cryptoValues[0].low);
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMaxValueOnWindow = function calculateMaxValueOnWindow(slidingWindow) {
-  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.max(acc, cur.high), slidingWindow.cryptoValues[0].high)
-}
+  return slidingWindow.cryptoValues.reduce((acc, cur) => Math.max(acc, cur.high), slidingWindow.cryptoValues[0].high);
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMaxAmplitudeOnWindow = function calculateMaxAmplitudeOnWindow(slidingWindow) {
   return (slidingWindow.maxValueOnWindow - slidingWindow.minValueOnWindow) / slidingWindow.minValueOnWindow * 100;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMeanCandleSizeAbsolute = function calculateMeanCandleSizeAbsolute(slidingWindow) {
   return slidingWindow.cryptoValues.reduce((acc, cur) => acc + (Math.abs(cur.closeMinusOpen) / slidingWindow.cryptoValues.length), 0);
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateMeanCandleSizePercent = function calculateMeanCandleSizePercent(slidingWindow) {
   const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
   return meanSizeAbs / slidingWindow.meanCryptoValues * 100;
-}
+};
 // **********************************************************************************
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateStdDevCandleSizePercent = function calculateStdDevCandleSizePercent(slidingWindow) {
   const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
-  const squaredDiffs = slidingWindow.cryptoValues.map((cryptoValue) =>
+  const squaredDiffs = slidingWindow.cryptoValues.map(cryptoValue =>
     Math.pow((cryptoValue.closeMinusOpen - meanSizeAbs), 2));
   const variance = squaredDiffs.reduce((acc, cur) => acc + cur / slidingWindow.cryptoValues.length);
   const stdDevAbs = Math.sqrt(variance);
   return stdDevAbs / slidingWindow.meanCryptoValues * 100;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  count values that are strictly positive in second half of window
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecondHalf(slidingWindow) {
   const windowLength = slidingWindow.cryptoValues.length;
   const values = slidingWindow.cryptoValues;
@@ -327,16 +299,14 @@ const calculateNumberPositiveSecondHalf = function calculateNumberPositiveSecond
     }
   }
   return numberPositive;
-}
+};
 // **********************************************************************************
-
-
 
 
 /** *********************************************************************************
  *  Helper;
  *
- ** *********************************************************************************/
+ ** ******************************************************************************** */
 const calculateNumberNegativeLastFive = function calculateNumberNegativeLastFive(slidingWindow) {
   const windowLength = slidingWindow.cryptoValues.length;
   const values = slidingWindow.cryptoValues;
@@ -348,14 +318,13 @@ const calculateNumberNegativeLastFive = function calculateNumberNegativeLastFive
     if (values[y].closeMinusOpen < 0) {
       numberNegative++;
     }
-    if (count > 4) { //exit the loop in a dirty way
+    if (count > 4) { // exit the loop in a dirty way
       y = -1;
     }
   }
   return numberNegative;
-}
+};
 // **********************************************************************************
-
 
 
 module.exports = SlidingWindow;
