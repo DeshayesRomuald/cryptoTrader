@@ -67,7 +67,7 @@ CryptoWatcher.prototype.decide = function decide() {
     this.buyValue = lastClosed;
     this.bought = true;
     this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
-    this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+    this.limitToSell = lastClosed - ((this.trailingStopPercent * lastClosed) / 100);
 
     this.messageBuy(lastClosed);
   }
@@ -79,7 +79,7 @@ CryptoWatcher.prototype.decide = function decide() {
     // before that, big trailing stop let's say 25%
     this.tryToReduceTrailingStop(lastClosed);
 
-    const newLimitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
+    const newLimitToSell = lastClosed - ((this.trailingStopPercent * lastClosed) / 100);
     // it is still possible that value has lowered in previous iteration,
     // but less than 1%, then it grow back. In this case, we must not set
     // a min that is lower than the previous
@@ -94,7 +94,7 @@ CryptoWatcher.prototype.decide = function decide() {
   // SELL CRITERIA
   else if (this.bought && lastClosed < this.limitToSell) {
     const beneficeAbsolute = lastClosed - this.buyValue;
-    const beneficePercent = beneficeAbsolute / this.buyValue * 100 - FEES;
+    const beneficePercent = ((beneficeAbsolute / this.buyValue) * 100) - FEES;
     this.totalSell += beneficePercent;
     this.transactionsCompleted++;
 
@@ -110,7 +110,7 @@ CryptoWatcher.prototype.decide = function decide() {
 
 CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingStop(lastClosed) {
   if (
-    lastClosed / this.buyValue > (1 + this.smallerTrailingStop / 100) &&
+    lastClosed / this.buyValue > (1 + (this.smallerTrailingStop / 100)) &&
     this.trailingStopPercent === this.initTrailingStop
   ) {
     console.log('SET Small Trailing Stop');
