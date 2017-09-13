@@ -1,12 +1,5 @@
-const sleep = require('system-sleep');
-const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
-const clone = require('clone');
-const path = require('path');
-
 const math = require('../utils/math');
 const { notify } = require('../utils/notifier');
-const cryptoOHLCFactory = require('../factories/cryptoOHLCFactory');
-const slidingWindowFactory = require('../factories/slidingWindowFactory');
 
 const FEES = 0.26;
 
@@ -48,9 +41,8 @@ CryptoWatcher.prototype.add = function add(cryptoOhlc) {
  * directly to a very small value above buy value (supposing first guess was right and it went up)
  */
 CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingStopPercent() {
-  const meanStickSize = this.slidingWindow.meanCandleSizeInPercent;
-  const stdDevCandleSizePercent = this.slidingWindow.stdDevCandleSizePercent;
-
+  // const meanStickSize = this.slidingWindow.meanCandleSizeInPercent;
+  // const stdDevCandleSizePercent = this.slidingWindow.stdDevCandleSizePercent;
   // ~99% of candle size in window are smaller than this, should
   // generally 2 iterations going down before selling
   this.trailingStopPercent = 1 * this.trailingStopMultiplier;
@@ -126,7 +118,7 @@ CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingSt
   }
 };
 
-CryptoWatcher.prototype.getTotalSell = function getTotalSell(lastClosed) {
+CryptoWatcher.prototype.getTotalSell = function getTotalSell() {
   return this.totalSell;
 };
 
