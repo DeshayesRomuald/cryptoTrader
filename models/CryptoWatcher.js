@@ -32,6 +32,9 @@ const CryptoWatcher = function CryptoWatcher(wallet) {
 };
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
+  if(!cryptoOhlc) {
+    return;
+  }
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
 
   // update the value of the wallet when a new cryptoValue is received
@@ -69,6 +72,7 @@ CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingS
 // as long as it raises, keep it, when it stops, sell it.
 CryptoWatcher.prototype.decide = function decide() {
   const lastClosed = this.slidingWindow.getLast().close;
+
   // BUY CRETIERIA
   if (this.slidingWindow.previousPositivesOrZero >= this.minPositiveOnWindow &&
     this.slidingWindow.percentageProgressionOnWindow >= this.minProgressionOnWindow &&
@@ -84,12 +88,13 @@ CryptoWatcher.prototype.decide = function decide() {
     this.previousProgression = this.slidingWindow.percentageProgressionOnWindow;
     this.limitToSell = lastClosed - (this.trailingStopPercent * lastClosed / 100);
 
-    this.cryptoWallet.buyCrypto(cryptoCurrencyFactory.create({
+    const crypto = cryptoCurrencyFactory.create({
       name: this.slidingWindow.cryptoName,
       value: lastClosed,
       amountPossessed: AMOUNT_PER_TRANSACTION / lastClosed,
       valueInEur: AMOUNT_PER_TRANSACTION,
-    }));
+    });
+    this.cryptoWallet.buyCrypto(crypto);
 
     this.messageBuy(lastClosed);
   }
