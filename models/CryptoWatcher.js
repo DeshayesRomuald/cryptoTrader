@@ -1,11 +1,9 @@
 const math = require('../utils/math');
 const { notify } = require('../utils/notifier');
-const cryptoOHLCFactory = require('../factories/cryptoOHLCFactory');
-const slidingWindowFactory = require('../factories/slidingWindowFactory');
 const cryptoCurrencyFactory = require('../factories/cryptoCurrencyFactory');
 
 const FEES = 0.26;
-const AMOUNT_PER_TRANSACTION = 50;
+const AMOUNT_PER_TRANSACTION = 100;
 
 const CryptoWatcher = function CryptoWatcher(wallet) {
   this.cryptoWallet = wallet;

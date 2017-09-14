@@ -147,7 +147,7 @@ rl.question('Which testset to launch ?', (res) => {
     }
     console.log('TOTAL = ', total);
     console.log(`Wallet balance ${wallet.getWalletValue()}`);
-    
+
 
 })
 
