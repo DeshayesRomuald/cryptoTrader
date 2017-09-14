@@ -123,7 +123,7 @@ CryptoWallet.prototype.buyCrypto = buyCrypto;
 function sellCrypto(cryptoCurrency) {
   const crypto = this.get(cryptoCurrency);
   //order is important, first sell, then buy
-  crypto.sell(cryptoCurrency.amount, cryptoCurrency.value); 
+  crypto.sell(cryptoCurrency.amountPossessed, cryptoCurrency.value); 
   this.addFiat(cryptoCurrency.valueInEur)
  }
 CryptoWallet.prototype.sellCrypto = sellCrypto;
@@ -154,7 +154,7 @@ CryptoWallet.prototype.update = update;
  * @return {number} the total current value of the wallet
  */
 function getWalletValue() {
-  this.cryptoCurrencies.reduce((acc, cur) => {
+  return this.cryptoCurrencies.reduce((acc, cur) => {
     console.log('acc',acc);
     console.log('value',cur.valueInEur);
     console.log('name',cur.name);
