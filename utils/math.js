@@ -10,11 +10,11 @@ function round(number, precision = 2) {
  * @returns
  */
 function getMin(ohlc) {
-  return _.minBy(ohlc, x => x.close);
+  return _.minBy(ohlc, x => x.close).close;
 }
 
 function getMax(ohlc) {
-  return _.maxBy(ohlc, x => x.close);
+  return _.maxBy(ohlc, x => x.close).close;
 }
 
 module.exports = {

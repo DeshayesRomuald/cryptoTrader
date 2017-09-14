@@ -104,7 +104,7 @@ SlidingWindow.prototype.getLast = function getLast() {
  * Check if a cryptoOHLC is already inside the sliding window
  */
 SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(cryptoOhlc) {
-  if(!cryptoOhlc) {
+  if (!cryptoOhlc) {
     return true;
   }
   return this.cryptoValues.find(elem => elem.time === cryptoOhlc.time) !== undefined;
@@ -114,7 +114,7 @@ SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(crypt
  * Calculate the difference between mean and lowest and set the differenceMeanLowest
  */
 SlidingWindow.prototype.calculateDifferenceMeanLowest = function calculateDifferenceMeanLowest() {
-  this.differenceMeanLowest = (this.meanCryptoValues - this.minValueOnWindow) / (this.meanCryptoValues * 100);
+  this.differenceMeanLowest = ((this.meanCryptoValues - this.minValueOnWindow) / this.meanCryptoValues) * 100;
 };
 
 /**
@@ -190,7 +190,7 @@ function calculatePercentageProgressionOnWindow(slidingWindow) {
  * @returns {Number}
  */
 function calculateMinValueOnWindow(slidingWindow) {
-  return _.minBy(slidingWindow.cryptoValues, 'low');
+  return _.minBy(slidingWindow.cryptoValues, 'low').low;
 }
 
 
@@ -199,7 +199,7 @@ function calculateMinValueOnWindow(slidingWindow) {
  *
  ** ******************************************************************************** */
 const calculateMaxValueOnWindow = function calculateMaxValueOnWindow(slidingWindow) {
-  return _.maxBy(slidingWindow.cryptoValues, 'high');
+  return _.maxBy(slidingWindow.cryptoValues, 'high').high;
 };
 
 
@@ -217,7 +217,7 @@ function calculateMaxAmplitudeOnWindow(slidingWindow) {
  *
  ** ******************************************************************************** */
 function calculateMeanCandleSizeAbsolute(slidingWindow) {
-  return _.meanBy(slidingWindow.cryptoValues, 'closeMinusOpen');
+  return _.meanBy(slidingWindow.cryptoValues, 'closeMinusOpen').closeMinusOpen;
 }
 
 
