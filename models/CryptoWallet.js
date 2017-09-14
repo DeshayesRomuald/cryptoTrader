@@ -107,7 +107,7 @@ function buyCrypto(cryptoCurrency) {
   const crypto = this.get(cryptoCurrency);
   //order is important, first sell, then buy
   this.withdrawFiat(cryptoCurrency.valueInEur)
-  crypto.buy(cryptoCurrency.amount, cryptoCurrency.value);
+  crypto.buy(cryptoCurrency.amountPossessed, cryptoCurrency.value);
 }
 CryptoWallet.prototype.buyCrypto = buyCrypto;
 
@@ -141,7 +141,11 @@ function update(cryptoCurrency) {
   currentCryptoInWallet.changeRate(cryptoCurrency.value);
 
   const difference = currentCryptoInWallet.valueInEur - oldCryptoInWalletValue;
-  this.valueInEur += difference;
+  this.balanceInEur += difference;
+
+  // console.log('currentCryptoInWallet',currentCryptoInWallet);
+  // console.log('difference',difference);
+  // console.log('this.balanceInEur',this.balanceInEur);
 }
 CryptoWallet.prototype.update = update;
 
