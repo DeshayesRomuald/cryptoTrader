@@ -73,7 +73,7 @@ CryptoWatcher.prototype.estimateTrailingStopPercent = function estimateTrailingS
 CryptoWatcher.prototype.decide = function decide() {
   const lastClosed = this.slidingWindow.getLast().close;
 
-  // BUY CRETIERIA
+  // BUY CRITERIA
   if (this.slidingWindow.previousPositivesOrZero >= this.minPositiveOnWindow &&
     this.slidingWindow.percentageProgressionOnWindow >= this.minProgressionOnWindow &&
     this.slidingWindow.numberPositiveSecondHalf >= this.minPositiveSecHalf &&
@@ -126,7 +126,7 @@ CryptoWatcher.prototype.decide = function decide() {
     this.transactionsCompleted += 1;
 
 
-    //I need to sell the amount of crypto bought to cash in the benefice
+    // I need to sell the amount of crypto bought to cash in the benefice
     const amountBought = AMOUNT_PER_TRANSACTION / this.buyValue;
     this.cryptoWallet.sellCrypto(cryptoCurrencyFactory.create({
       name: this.slidingWindow.cryptoName,

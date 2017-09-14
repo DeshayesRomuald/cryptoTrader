@@ -124,7 +124,7 @@ function sellCrypto(cryptoCurrency) {
   const crypto = this.get(cryptoCurrency);
   // order is important, first sell, then buy
   crypto.sell(cryptoCurrency.amountPossessed, cryptoCurrency.value);
-  this.addFiat(cryptoCurrency.valueInEur)
+  this.addFiat(cryptoCurrency.valueInEur);
 }
 CryptoWallet.prototype.sellCrypto = sellCrypto;
 
