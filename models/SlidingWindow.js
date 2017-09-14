@@ -239,7 +239,7 @@ function calculateMeanCandleSizePercent(slidingWindow) {
 function calculateStdDevCandleSizePercent(slidingWindow) {
   const meanSizeAbs = calculateMeanCandleSizeAbsolute(slidingWindow);
   const squaredDiffs = slidingWindow.cryptoValues
-    .map(cryptoValue => (cryptoValue.closeMinusOpen - meanSizeAbs) ** 2);
+    .map(cryptoValue => Math.pow(cryptoValue.closeMinusOpen - meanSizeAbs), 2);
   const variance = squaredDiffs.reduce((acc, cur) => acc + (cur / slidingWindow.cryptoValues.length));
   const stdDevAbs = Math.sqrt(variance);
   return (stdDevAbs / slidingWindow.meanCryptoValues) * 100;
