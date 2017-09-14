@@ -104,6 +104,9 @@ SlidingWindow.prototype.getLast = function getLast() {
  * Check if a cryptoOHLC is already inside the sliding window
  */
 SlidingWindow.prototype.hasAlreadyBeenAdded = function hasAlreadyBeenAdded(cryptoOhlc) {
+  if(!cryptoOhlc) {
+    return true;
+  }
   return this.cryptoValues.find(elem => elem.time === cryptoOhlc.time) !== undefined;
 };
 
