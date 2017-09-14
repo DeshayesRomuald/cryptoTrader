@@ -32,7 +32,7 @@ const CryptoWatcher = function CryptoWatcher(wallet) {
 };
 
 CryptoWatcher.prototype.add = function add(cryptoOhlc) {
-  if(!cryptoOhlc) {
+  if (!cryptoOhlc) {
     return;
   }
   this.slidingWindow.addCryptoOHLC(cryptoOhlc);
@@ -150,22 +150,10 @@ CryptoWatcher.prototype.tryToReduceTrailingStop = function tryToReduceTrailingSt
     lastClosed / this.buyValue > (1 + (this.smallerTrailingStop / 100)) &&
     this.trailingStopPercent === this.initTrailingStop
   ) {
-<<<<<<< HEAD
     console.log('SET Small Trailing Stop');
     this.trailingStopPercent = this.smallerTrailingStop;
   }
 };
-||||||| parent of 7b9f360a... buy and sell use wallet
-      console.log('SET Small Trailing Stop');
-      this.trailingStopPercent = this.smallerTrailingStop;
-    }
-}
-=======
-    console.log('SET Small Trailing Stop');
-    this.trailingStopPercent = this.smallerTrailingStop;
-  }
-}
->>>>>>> 7b9f360a... buy and sell use wallet
 
 CryptoWatcher.prototype.getTotalSell = function getTotalSell() {
   return this.totalSell;
@@ -209,7 +197,7 @@ CryptoWatcher.prototype.messageSell = function messageSell(beneficePercent, last
     `% in ${this.transactionsCompleted} transactions`);
   console.log(`[AmountBought : ${amountBought}]`);
   console.log(`[Buy Value : ${this.buyValue}]`);
-  console.log(`[Sell Value : ${lastClosed * amountBought}]`);  
+  console.log(`[Sell Value : ${lastClosed * amountBought}]`);
   console.log('#########                                                                       #');
   console.log('#################################################################################');
   console.log('#################################################################################');
