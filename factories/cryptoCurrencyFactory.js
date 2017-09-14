@@ -34,6 +34,9 @@ function create(payload) {
 function createEmpty(name) {
   const cryptoCurrency = new CryptoCurrency();
   cryptoCurrency.name = name;
+  cryptoCurrency.value = 0;
+  cryptoCurrency.amountPossessed = 0;
+  cryptoCurrency.valueInEur = 0;
   return cryptoCurrency;
 }
 
