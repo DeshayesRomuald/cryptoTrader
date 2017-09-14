@@ -1,7 +1,7 @@
 const cryptoCurrencyFactory = require('../factories/cryptoCurrencyFactory');
 
 /**
- * 
+ *
  */
 const CryptoWallet = function CryptoWallet() {
   this.balanceInEur = 0;
@@ -15,8 +15,8 @@ const CryptoWallet = function CryptoWallet() {
  * adds a new crypto currency to the wallet
  * if some amount is already present in the added crypto currency,
  * try to buy it for fiat
- * 
- * @param {CryptoCurrency} currency 
+ *
+ * @param {CryptoCurrency} currency
  * @returns {CryptoCurrency | null} the added currency or null
  * if currency was not added
  */
@@ -40,9 +40,9 @@ CryptoWallet.prototype.addCryptoCurrency = addCryptoCurrency;
 
 
 /**
- * 
- * 
- * @param {CryptoCurrency} currency 
+ *
+ *
+ * @param {CryptoCurrency} currency
  * @returns {boolean} true iff currency name is already present
  */
 function alreadyThere(currency) {
@@ -54,9 +54,9 @@ CryptoWallet.prototype.alreadyThere = alreadyThere;
 
 
 /**
- * 
- * 
- * @param {CryptoCurrency} currency 
+ *
+ *
+ * @param {CryptoCurrency} currency
  * @returns {CryptoCurrency} the currency whose name match the one given in param, undefined otherwise
  */
 function get(currency) {
@@ -68,9 +68,9 @@ CryptoWallet.prototype.get = get;
 
 
 /**
- * 
- * 
- * @param {number} amount 
+ *
+ *
+ * @param {number} amount
  */
 function addFiat(amount) {
   this.balanceInEur += amount;
@@ -81,10 +81,10 @@ CryptoWallet.prototype.addFiat = addFiat;
 
 
 /**
- * 
- * 
- * @param {number} amount 
- * @throws {Exception} can not exchange more fiat than possessed 
+ *
+ *
+ * @param {number} amount
+ * @throws {Exception} can not exchange more fiat than possessed
  */
 function withdrawFiat(amount) {
   if (amount > this.balanceInEur) {
@@ -98,10 +98,10 @@ CryptoWallet.prototype.withdrawFiat = withdrawFiat;
 
 
 /**
- * 
- * 
- * @param {CryptoCurrency} cryptoCurrency 
- * @throws {Exception} can not exchange more fiat than possessed 
+ *
+ *
+ * @param {CryptoCurrency} cryptoCurrency
+ * @throws {Exception} can not exchange more fiat than possessed
  */
 function buyCrypto(cryptoCurrency) {
   const crypto = this.get(cryptoCurrency);
@@ -115,24 +115,24 @@ CryptoWallet.prototype.buyCrypto = buyCrypto;
 
 
 /**
- * 
- * 
- * @param {CryptoCurrency} cryptoCurrency 
+ *
+ *
+ * @param {CryptoCurrency} cryptoCurrency
  * @throws {Exception} can not sell more crypto than possessed
  */
 function sellCrypto(cryptoCurrency) {
   const crypto = this.get(cryptoCurrency);
-  //order is important, first sell, then buy
-  crypto.sell(cryptoCurrency.amountPossessed, cryptoCurrency.value); 
+  // order is important, first sell, then buy
+  crypto.sell(cryptoCurrency.amountPossessed, cryptoCurrency.value);
   this.addFiat(cryptoCurrency.valueInEur)
- }
+}
 CryptoWallet.prototype.sellCrypto = sellCrypto;
 
 /**
- * 
+ *
  * recalculates new value of a given crypto as well
  * as this.balanceInEur
- * @param {CryptoCurrency} cryptoCurrency 
+ * @param {CryptoCurrency} cryptoCurrency
  */
 function update(cryptoCurrency) {
   // the amount possessed with old rate
@@ -150,17 +150,11 @@ function update(cryptoCurrency) {
 CryptoWallet.prototype.update = update;
 
 /**
- * 
+ *
  * @return {number} the total current value of the wallet
  */
 function getWalletValue() {
-  return this.cryptoCurrencies.reduce((acc, cur) => {
-    console.log('acc',acc);
-    console.log('value',cur.valueInEur);
-    console.log('name',cur.name);
-    console.log('');
-    return acc + cur.valueInEur
-  }, this.balanceInEur);
+  return this.cryptoCurrencies.reduce((acc, cur) => acc + cur.valueInEur, this.balanceInEur);
 }
 CryptoWallet.prototype.getWalletValue = getWalletValue;
 
